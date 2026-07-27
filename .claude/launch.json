@@ -4,8 +4,9 @@
     {
       "name": "mbti",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "-l", "4321", "."],
-      "port": 4321
+      "runtimeArgs": ["-y", "serve", "."],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }
