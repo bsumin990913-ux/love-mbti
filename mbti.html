@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>동네 성격 검사 · 52문항</title>
+<meta name="description" content="일상 속 52개의 순간으로 알아보는 나의 성격 유형" />
+
+<!-- 배포 도메인이 정해지면 https://example.com 을 전부 실제 주소로 바꾼다 -->
+<link rel="canonical" href="https://example.com/mbti.html" />
+<meta name="theme-color" content="#ff6f0f" />
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="오늘의 검사" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:url" content="https://example.com/mbti.html" />
+<meta property="og:title" content="동네 성격 검사 · 52문항" />
+<meta property="og:description" content="알람을 몇 개 맞추는지, 단톡방 알림을 어떻게 두는지. 아주 사소한 52개의 순간으로 성격 유형을 찾아드려요." />
+<meta property="og:image" content="https://example.com/og-mbti.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="동네 성격 검사 52문항" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ── 인트로 ───────────────────────────────────── -->
+  <section class="screen screen--intro is-active" id="screen-intro">
+    <div class="intro">
+      <a class="homelink" href="./index.html">다른 검사 보기</a>
+      <div class="intro__badge">52문항 · 약 6분</div>
+      <h1 class="intro__title">
+        엘리베이터에서 이웃을 만났을 때<br />
+        당신은 어떤 사람인가요?
+      </h1>
+      <p class="intro__body">
+        거창한 질문은 없어요. 알람을 몇 개 맞추는지, 단톡방 알림을 어떻게 두는지 같은
+        아주 사소한 52개의 순간으로 성격 유형을 찾아드려요.
+      </p>
+
+      <ul class="intro__points">
+        <li><span class="dot"></span>정답도, 좋은 유형도 없어요</li>
+        <li><span class="dot"></span>고민하지 말고 평소 나에 가까운 쪽으로</li>
+        <li><span class="dot"></span>답한 내용은 이 기기에만 저장돼요</li>
+      </ul>
+
+      <div class="intro__actions">
+        <button class="btn btn--primary btn--xl" id="btn-start">검사 시작하기</button>
+        <button class="btn btn--ghost btn--xl is-hidden" id="btn-resume">이어서 하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 문항 ─────────────────────────────────────── -->
+  <section class="screen screen--quiz" id="screen-quiz">
+    <header class="topbar">
+      <button class="topbar__back" id="btn-back" aria-label="이전 질문">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="topbar__meta">
+        <span class="topbar__count"><b id="q-index">1</b> / <span id="q-total">52</span></span>
+      </div>
+      <button class="topbar__exit" id="btn-exit">그만두기</button>
+    </header>
+
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0">
+      <div class="progress__fill" id="progress-fill"></div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz__scene" id="q-scene">상황</p>
+      <h2 class="quiz__question" id="q-text">질문</h2>
+
+      <div class="quiz__options" id="q-options">
+        <button class="option" data-side="A">
+          <span class="option__key">A</span>
+          <span class="option__label"></span>
+        </button>
+        <button class="option" data-side="B">
+          <span class="option__key">B</span>
+          <span class="option__label"></span>
+        </button>
+      </div>
+
+      <p class="quiz__hint">키보드 <kbd>1</kbd> <kbd>2</kbd> 로도 고를 수 있어요</p>
+    </div>
+  </section>
+
+  <!-- ── 결과 ─────────────────────────────────────── -->
+  <section class="screen screen--result" id="screen-result">
+    <div class="result">
+      <div class="result__hero">
+        <p class="result__eyebrow">당신의 유형은</p>
+        <h1 class="result__code" id="r-code">ENFP</h1>
+        <p class="result__nick" id="r-nick">동네 분위기 메이커</p>
+        <p class="result__tagline" id="r-tagline"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">성향 지표</h3>
+        <div class="bars" id="r-bars"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">이런 사람이에요</h3>
+        <p class="card__body" id="r-desc"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">일상에서 이렇게 드러나요</h3>
+        <ul class="traits" id="r-traits"></ul>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">이런 점은 조심해요</h3>
+        <p class="card__body" id="r-watch"></p>
+      </div>
+
+      <div class="card card--pair">
+        <h3 class="card__title">잘 맞는 유형</h3>
+        <div class="pair" id="r-pair"></div>
+      </div>
+
+      <a class="crosslink" href="./love.html">
+        <span class="crosslink__label">연애할 때의 나는 조금 다르대요</span>
+        <span class="crosslink__title">연애 유형 검사 44문항 하러 가기</span>
+      </a>
+
+      <div class="result__actions">
+        <button class="btn btn--primary btn--xl" id="btn-share">결과 복사하기</button>
+        <button class="btn btn--secondary btn--xl" id="btn-restart">다시 검사하기</button>
+      </div>
+      <p class="result__foot">이 검사는 재미로 보는 성격 유형 참고 자료예요. 심리 진단이 아니에요.</p>
+    </div>
+  </section>
+
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite"></div>
+</div>
+
+<script src="./questions.js"></script>
+<script src="./types.js"></script>
+<script src="./engine.js"></script>
+<script>
+  QuizEngine.mount({
+    storageKey: 'dongne-mbti/v1',
+    questions: QUESTIONS,
+    types: TYPES,
+    axes: AXES,
+    shareText: (code, t) =>
+      `제 유형은 ${code} · ${t.nick}이에요.\n"${t.tagline}"\n\n동네 성격 검사 52문항`,
+  });
+</script>
+</body>
+</html>

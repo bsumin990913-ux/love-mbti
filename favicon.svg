@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 두 개의 검사(성격·연애)를 겹친 원 두 개로 표현한다 -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8a3d" />
+      <stop offset="1" stop-color="#ff6f0f" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#fff7f2" />
+  <circle cx="25" cy="32" r="15" fill="url(#g)" />
+  <circle cx="39" cy="32" r="15" fill="#d13c62" fill-opacity="0.82" />
+</svg>

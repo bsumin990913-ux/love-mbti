@@ -1,0 +1,162 @@
+/* ─────────────────────────────────────────────────────
+   연애 검사 테마 — Bloom(#FFD1D5) × Lemon(#FAFFC7)
+   styles.css 위에 얹는 레이어. 당근 SEED 서피스와는 분리된 아이덴티티다.
+   ───────────────────────────────────────────────────── */
+.theme-love {
+  /* 액션 로즈 — Bloom 계열을 흰 글씨가 얹힐 수 있는 명도까지 내린 값.
+     파스텔(#ff7b9c)은 흰 글씨 대비가 2.45:1이라 주 버튼에 쓸 수 없다 (4.63:1) */
+  --primary:        #d13c62;
+  --primary-hover:  #db4d71;
+  --primary-pressed:#c0325a;
+  --bloom:          #ffd1d5;
+  --bloom-deep:     #ffb8c4;
+  --lemon:          #faffc7;
+  --lemon-deep:     #f2f9a8;
+
+  --canvas:         #ffffff;
+  --background:     #fff2f4;
+  --surface:        #fff7f8;
+  --foreground:     #3d2a30;  /* 따뜻한 먹색 — 순수 회색보다 핑크와 붙는다 */
+  /* muted 는 핑크 틴트 위에 얹히므로 흰 배경 기준보다 한 단계 더 어둡게 잡는다 */
+  --muted:          #7f5c69;  /* 핑크 배경 대비 4.5:1 이상 */
+  --gray-200:       #f7e3e7;
+  --gray-500:       #c9aeb5;  /* 비활성 아이콘 전용. 텍스트에는 쓰지 않는다 */
+  /* 흰 카드와 핑크 배경 양쪽에 얹히므로 더 어두운 쪽에 맞춘다 (흰 5.77:1 / 핑크 5.05:1) */
+  --text-secondary: #7f5c69;
+  --primary-text:   #a13054;  /* 액션 핑크(2.5:1)를 글자용으로 내린 값 — 6.85:1 */
+  --hairline:       #fbe7ea;
+  --brand-tint:     #fff5f6;
+
+  --shadow-soft:  0 8px 24px rgba(209, 60, 98, 0.18);
+  --shadow-card:  0 2px 12px rgba(209, 60, 98, 0.07);
+}
+
+/* 배경에 은은한 블룸 그라데이션 (참고 이미지의 분위기)
+   background-attachment: fixed 와 backdrop-filter 는 모바일에서
+   스크롤마다 재합성을 유발해 쓰지 않는다 */
+.theme-love {
+  background:
+    radial-gradient(900px 520px at 82% -8%,  var(--bloom) 0%, transparent 62%),
+    radial-gradient(760px 460px at -14% 22%, var(--lemon) 0%, transparent 58%),
+    var(--background);
+  background-repeat: no-repeat;
+}
+.theme-love .app { background: transparent; }
+
+/* ── 공통 요소를 둥글고 부드럽게 ─────────────────── */
+.theme-love .btn { border-radius: var(--r-full); font-weight: 700; }
+/* 그라데이션은 밝은 쪽 끝에서도 흰 글씨가 4.5:1을 넘어야 한다 */
+.theme-love .btn--primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-pressed) 100%);
+  box-shadow: var(--shadow-soft);
+}
+.theme-love .btn--primary:hover {
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+}
+.theme-love .btn--primary:active {
+  background: linear-gradient(135deg, var(--primary-pressed) 0%, #b32a52 100%);
+}
+.theme-love .btn--secondary {
+  background: #ffffff;
+  color: var(--primary-text);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── 인트로 ───────────────────────────────────────── */
+.theme-love .intro__badge {
+  background: var(--lemon);
+  color: #7d6f22;
+}
+.theme-love .intro__points {
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+.theme-love .dot { background: var(--primary); }
+
+/* ── 문항 ─────────────────────────────────────────── */
+.theme-love .topbar { background: transparent; }
+.theme-love .progress { background: rgba(255, 255, 255, 0.7); }
+.theme-love .progress__fill {
+  background: linear-gradient(90deg, var(--lemon-deep) 0%, var(--primary) 100%);
+}
+.theme-love .quiz__scene { color: var(--primary-text); }
+
+.theme-love .option {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+.theme-love .option:hover { border-color: var(--bloom-deep); }
+.theme-love .option.is-picked {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-soft);
+}
+.theme-love .option__key {
+  background: var(--bloom);
+  border-color: transparent;
+  color: #7a3b4d;  /* Bloom 배경 대비 4.5:1 */
+}
+.theme-love .option.is-picked .option__key {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+.theme-love kbd { background: rgba(255, 255, 255, 0.85); border-color: var(--hairline); }
+
+/* ── 결과 ─────────────────────────────────────────── */
+.theme-love .result { background: transparent; }
+.theme-love .result__hero { background: transparent; padding-bottom: var(--sp-10); }
+.theme-love .result__code {
+  color: var(--primary-text);
+  letter-spacing: 0.04em;
+}
+.theme-love .result__attach {
+  display: inline-block;
+  margin: var(--sp-4) 0 0;
+  padding: var(--sp-1) var(--sp-4);
+  border-radius: var(--r-full);
+  background: var(--lemon);
+  color: #7d6f22;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.theme-love .result__attach:empty { display: none; }
+
+.theme-love .card {
+  margin: var(--sp-3) var(--sp-4) 0;
+  padding: var(--sp-6) var(--sp-5);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+/* 지표 막대는 블룸 → 핑크 그라데이션 */
+.theme-love .bar__track { background: var(--gray-200); }
+.theme-love .bar__fill {
+  background: linear-gradient(90deg, var(--bloom) 0%, var(--primary) 100%);
+}
+.theme-love .bar__fill--right {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--bloom) 100%);
+}
+.theme-love .traits li::before { background: var(--primary); }
+
+.theme-love .pair__item { background: var(--brand-tint); border-radius: 14px; }
+.theme-love .pair__code {
+  background: #ffffff;
+  border-color: var(--hairline);
+  color: var(--primary-text);
+}
+
+.theme-love .crosslink {
+  margin: var(--sp-3) var(--sp-4) 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--lemon) 0%, var(--bloom) 100%);
+}
+.theme-love .crosslink__label { color: #6f5158; }
+.theme-love .crosslink__title { color: #a13054; }
+
+.theme-love .snackbar { background: #4a2f37; border-radius: var(--r-full); }

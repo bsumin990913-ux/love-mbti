@@ -1,0 +1,139 @@
+/* ─────────────────────────────────────────────────────
+   메인 — 두 검사를 고르는 화면
+   각 카드가 자기 검사의 색을 미리 보여준다.
+   ───────────────────────────────────────────────────── */
+.theme-home {
+  --love-primary: #ff7b9c;
+  --love-bloom:   #ffd1d5;
+  --love-lemon:   #faffc7;
+  --love-ink:     #7f5c69;
+  --shadow-card:  0 2px 12px rgba(33, 33, 36, 0.06);
+}
+
+.home {
+  padding: var(--sp-16) var(--sp-5) var(--sp-12);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__head { margin-bottom: var(--sp-8); }
+.home__title {
+  margin: 0 0 var(--sp-3);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+.home__sub {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+.picks { display: grid; gap: var(--sp-4); }
+
+.pick {
+  display: block;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--canvas);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--motion-fast) var(--ease-standard),
+              box-shadow var(--motion-fast) var(--ease-standard);
+}
+.pick:hover { box-shadow: 0 6px 20px rgba(33, 33, 36, 0.1); }
+.pick:active { transform: scale(0.98); }
+.pick:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
+
+/* 카드 상단의 색 면 — 각 검사의 분위기를 미리 보여주는 자리 */
+.pick__art {
+  position: relative;
+  height: 108px;
+  overflow: hidden;
+}
+.blob {
+  position: absolute;
+  border-radius: var(--r-full);
+}
+.blob--a { width: 132px; height: 132px; top: -34px; right: -18px; }
+.blob--b { width: 76px;  height: 76px;  top: 46px;  right: 92px; }
+
+.pick--mbti .pick__art { background: var(--brand-tint); }
+.pick--mbti .blob--a { background: rgba(255, 111, 15, 0.16); }
+.pick--mbti .blob--b { background: rgba(255, 111, 15, 0.09); }
+
+.pick--love .pick__art {
+  background: linear-gradient(135deg, var(--love-lemon) 0%, var(--love-bloom) 100%);
+}
+.pick--love .blob--a { background: rgba(255, 123, 156, 0.22); }
+.pick--love .blob--b { background: rgba(255, 255, 255, 0.55); }
+
+.pick__body { padding: var(--sp-5); }
+
+.pick__badge {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-full);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.pick--mbti .pick__badge { background: var(--brand-tint); color: #a34205; }
+.pick--love .pick__badge { background: #fff2f4; color: #a13054; }
+
+.pick__title {
+  margin: var(--sp-3) 0 var(--sp-2);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+.pick__desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+/* 진행 중인 검사가 있을 때만 노출된다 */
+.pick__meta {
+  display: none;
+  margin-top: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.pick__meta.is-shown { display: inline-block; }
+
+.pick__go {
+  display: block;
+  margin-top: var(--sp-4);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.pick__go::after { content: ' →'; }
+/* SEED Primary(#ff6f0f)를 흰 배경 위 글자색으로 쓰면 2.79:1이라 읽기 어렵다.
+   버튼 배경일 때만 브랜드 색을 쓰고, 링크 글자는 어둡게 내린 값을 쓴다 */
+.pick--mbti .pick__go { color: #a34205; }
+.pick--love .pick__go { color: #a13054; }
+
+.home__foot {
+  margin: auto 0 0;
+  padding-top: var(--sp-10);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  text-align: center;
+}

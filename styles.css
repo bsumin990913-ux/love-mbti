@@ -1,0 +1,543 @@
+/* ─────────────────────────────────────────────────────
+   SEED / Karrot 토큰 (DESIGN.md §2, §3, §5)
+   ───────────────────────────────────────────────────── */
+:root {
+  --primary:        #ff6f0f;
+  --primary-hover:  #ff9e66;
+  --primary-pressed:#ff9e66;
+  --canvas:         #ffffff;
+  --background:     #f2f3f6;
+  --surface:        #f7f8fa;
+  --foreground:     #212124;
+  --muted:          #868b94;
+  --on-primary:     #ffffff;
+  --hairline:       #eaebee;
+  --brand-tint:     #fff5f0;
+  --error:          #fa2314;
+  --info:           #009ceb;
+  --success:        #1aa174;
+  --gray-200:       #eaebee;
+  --gray-500:       #adb1ba;
+  /* 읽으라고 쓴 보조 텍스트 전용.
+     SEED muted(#868b94)는 3.42:1, gray-500은 2.15:1로 WCAG AA(4.5:1)에 미달한다.
+     두 토큰은 원래 de-emphasis용이라 값은 그대로 두고, 실제로 읽히는
+     설명문·잔글씨에는 gray-700 계열을 따로 쓴다.
+     회색 배경(#f2f3f6) 위에서도 4.5:1을 넘도록 잡은 값 — 흰색 5.21 / 배경 4.69 */
+  --text-secondary: #686d75;
+  /* 브랜드 오렌지는 흰 배경에서 2.79:1이라 글자색으로는 어떤 크기에서도 AA를 못 넘긴다.
+     면(버튼 배경, 진행바, 점)에는 --primary 를, 글자에는 이 값을 쓴다 (5.86:1) */
+  --primary-text:   #a34205;
+
+  /* 4px 그리드 (§12 원칙 5) */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-14: 56px; --sp-16: 64px;
+
+  --r-sm: 6px; --r-md: 8px; --r-lg: 12px; --r-full: 9999px;
+
+  /* §15 모션 — 스프링/오버슈트 금지 */
+  --motion-fast: 150ms;
+  --motion-standard: 250ms;
+  --motion-slow: 350ms;
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  /* 한글은 어절 단위로 줄바꿈한다 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  background: var(--background);
+  color: var(--foreground);
+  /* §3 — 시스템 폰트. 브랜드 웹폰트를 심지 않는다 */
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard,
+               "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body { min-height: 100dvh; }
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--canvas);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── 화면 전환 ───────────────────────────────────── */
+.screen { display: none; }
+.screen.is-active { display: block; }
+.is-hidden { display: none !important; }
+
+/* ─────────────────────────────────────────────────────
+   버튼
+   ───────────────────────────────────────────────────── */
+.btn {
+  appearance: none;
+  border: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-standard),
+              transform var(--motion-fast) var(--ease-standard);
+}
+.btn--xl { width: 100%; height: 52px; }
+.btn--primary { background: var(--primary); color: var(--on-primary); }
+.btn--primary:hover { background: var(--primary-hover); }
+.btn--primary:active { background: var(--primary-pressed); transform: scale(0.98); }
+.btn--secondary { background: var(--gray-200); color: var(--foreground); }
+.btn--secondary:active { transform: scale(0.98); }
+.btn--ghost { background: transparent; color: var(--text-secondary); font-weight: 600; height: 44px; }
+.btn--ghost:hover { color: var(--foreground); }
+.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px var(--sp-1);
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font: inherit;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────
+   인트로
+   ───────────────────────────────────────────────────── */
+.intro {
+  padding: var(--sp-16) var(--sp-5) var(--sp-10);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+/* 검사 인트로에서 메인으로 돌아가는 링크 */
+.homelink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-5);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.homelink:hover { color: var(--foreground); }
+.homelink::before { content: '←'; }
+
+.intro__badge {
+  align-self: flex-start;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-full);
+  background: var(--brand-tint);
+  color: var(--primary-text);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: var(--sp-5);
+}
+.intro__title {
+  margin: 0 0 var(--sp-4);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+.intro__body {
+  margin: 0 0 var(--sp-8);
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.intro__points {
+  list-style: none;
+  margin: 0 0 auto;
+  padding: var(--sp-5);
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  display: grid;
+  gap: var(--sp-3);
+}
+.intro__points li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.dot {
+  flex: none;
+  width: 6px; height: 6px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+}
+.intro__actions {
+  margin-top: var(--sp-10);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+/* ─────────────────────────────────────────────────────
+   상단 바 · 진행률
+   ───────────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 56px;
+  background: var(--canvas);
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  padding-right: var(--sp-4);
+}
+.topbar__back {
+  height: 44px; width: 44px;
+  display: grid; place-items: center;
+  background: none; border: 0; padding: 0;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.topbar__back:disabled { color: var(--gray-500); cursor: default; }
+.topbar__meta { text-align: center; }
+.topbar__count { font-size: 14px; color: var(--text-secondary); letter-spacing: -0.02em; }
+.topbar__count b { color: var(--foreground); font-weight: 700; }
+.topbar__exit {
+  background: none; border: 0; padding: var(--sp-2);
+  font: inherit; font-size: 14px; color: var(--text-secondary);
+  cursor: pointer;
+}
+.topbar__exit:hover { color: var(--foreground); }
+
+.progress {
+  height: 3px;
+  background: var(--hairline);
+  position: sticky;
+  top: 56px;
+  z-index: 10;
+}
+.progress__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  transition: width var(--motion-standard) var(--ease-standard);
+}
+
+/* ─────────────────────────────────────────────────────
+   문항
+   ───────────────────────────────────────────────────── */
+.quiz {
+  padding: var(--sp-10) var(--sp-5) var(--sp-10);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 59px);
+}
+.quiz__scene {
+  margin: 0 0 var(--sp-3);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary-text);
+}
+.quiz__question {
+  margin: 0 0 var(--sp-8);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+.quiz__options { display: grid; gap: var(--sp-3); }
+
+.option {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--sp-3);
+  align-items: start;
+  width: 100%;
+  padding: var(--sp-5);
+  text-align: left;
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color var(--motion-fast) var(--ease-standard),
+              background-color var(--motion-fast) var(--ease-standard),
+              transform var(--motion-fast) var(--ease-standard);
+}
+.option:hover { border-color: var(--gray-500); }
+.option:active { transform: scale(0.98); }
+.option:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.option.is-picked {
+  border-color: var(--primary-text);
+  background: var(--brand-tint);
+}
+.option.is-picked .option__key {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary-text);
+}
+.option__key {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: background-color var(--motion-fast) var(--ease-standard),
+              color var(--motion-fast) var(--ease-standard);
+}
+.option__label { padding-top: 1px; }
+
+.quiz__hint {
+  margin: auto 0 0;
+  padding-top: var(--sp-8);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+/* 문항 교체 시 크로스페이드 (§15 — 슬라이드/스프링 금지) */
+.quiz.is-swapping { opacity: 0; }
+.quiz { transition: opacity var(--motion-fast) var(--ease-standard); }
+
+/* ─────────────────────────────────────────────────────
+   결과
+   ───────────────────────────────────────────────────── */
+.result { padding: 0 0 var(--sp-12); background: var(--background); }
+.result__hero {
+  background: var(--canvas);
+  padding: var(--sp-16) var(--sp-5) var(--sp-12);
+  text-align: center;
+}
+.result__eyebrow {
+  margin: 0 0 var(--sp-2);
+  font-size: 14px;
+  color: var(--text-secondary);
+  letter-spacing: -0.02em;
+}
+.result__code {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--primary-text);
+}
+.result__nick {
+  margin: var(--sp-3) 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+.result__tagline {
+  margin: var(--sp-2) 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+.card {
+  background: var(--canvas);
+  margin: var(--sp-2) 0 0;
+  padding: var(--sp-6) var(--sp-5);
+}
+.card__title {
+  margin: 0 0 var(--sp-4);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.card__body {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.bars { display: grid; gap: var(--sp-5); }
+.bar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--sp-2);
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+.bar__side { color: var(--text-secondary); }
+.bar__side.is-win { color: var(--foreground); font-weight: 700; }
+.bar__side small { display: block; font-size: 11px; font-weight: 400; color: var(--text-secondary); }
+.bar__track {
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--hairline);
+  overflow: hidden;
+  display: flex;
+}
+/* §12 원칙 1 — 주황은 장식하지 않는다. 지표 막대는 중립색을 쓰고
+   주황은 유형 코드와 주 CTA에만 남긴다 */
+.bar__fill {
+  height: 100%;
+  background: var(--foreground);
+  transition: width var(--motion-slow) var(--ease-standard);
+}
+.bar__fill--right { margin-left: auto; }
+.bar__pct {
+  margin-top: var(--sp-2);
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+.bar__tie { color: var(--text-secondary); }
+
+.traits { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.traits li {
+  display: flex;
+  gap: var(--sp-3);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.traits li::before {
+  content: '';
+  flex: none;
+  width: 6px; height: 6px;
+  margin-top: 8px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+}
+
+.pair { display: grid; gap: var(--sp-3); }
+.pair__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--surface);
+  border-radius: var(--r-md);
+}
+.pair__code {
+  flex: none;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-sm);
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-text);
+  letter-spacing: 0.02em;
+}
+.pair__why {
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+/* 다른 검사로 넘어가는 링크 */
+.crosslink {
+  display: block;
+  margin: var(--sp-2) 0 0;
+  padding: var(--sp-5);
+  background: var(--brand-tint);
+  text-decoration: none;
+}
+.crosslink__label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: -0.02em;
+}
+/* §12 원칙 1 — 주 CTA와 같은 화면에 주황이 둘이 될 수 없어서
+   링크임은 화살표로 알리고 색은 중립으로 둔다 */
+.crosslink__title {
+  display: block;
+  margin-top: var(--sp-1);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+.crosslink__title::after { content: ' →'; }
+
+.result__actions {
+  padding: var(--sp-8) var(--sp-5) 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+.result__foot {
+  margin: var(--sp-6) 0 0;
+  padding: 0 var(--sp-5);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+/* ─────────────────────────────────────────────────────
+   스낵바 (§14 — gray-1000 배경, 아이콘 없음, 3초)
+   ───────────────────────────────────────────────────── */
+.snackbar {
+  position: fixed;
+  left: 50%;
+  bottom: var(--sp-4);
+  transform: translate(-50%, 12px);
+  max-width: 448px;
+  width: calc(100% - 32px);
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: #1a1c20;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast) var(--ease-exit),
+              transform var(--motion-fast) var(--ease-exit);
+}
+.snackbar.is-open {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition: opacity var(--motion-standard) var(--ease-enter),
+              transform var(--motion-standard) var(--ease-enter);
+}
+
+/* ─────────────────────────────────────────────────────
+   §15 — reduce motion 시 모든 모션은 0ms
+   ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

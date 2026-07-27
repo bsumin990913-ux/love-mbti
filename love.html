@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>연애 유형 검사 · 44문항</title>
+<meta name="description" content="애착이론을 바탕으로 만든 4축 16유형 연애 성향 검사" />
+
+<!-- 배포 도메인이 정해지면 https://example.com 을 전부 실제 주소로 바꾼다 -->
+<link rel="canonical" href="https://example.com/love.html" />
+<meta name="theme-color" content="#d13c62" />
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="오늘의 검사" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:url" content="https://example.com/love.html" />
+<meta property="og:title" content="연애 유형 검사 · 44문항" />
+<meta property="og:description" content="연락 텀, 서운함을 꺼내는 타이밍, 기념일의 온도. 애착이론을 바탕으로 만든 4축 16유형 검사." />
+<meta property="og:image" content="https://example.com/og-love.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="연애 유형 검사 44문항" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="./love-styles.css" />
+</head>
+<body class="theme-love">
+<div class="app" id="app">
+
+  <!-- ── 인트로 ───────────────────────────────────── -->
+  <section class="screen screen--intro is-active" id="screen-intro">
+    <div class="intro">
+      <a class="homelink" href="./index.html">다른 검사 보기</a>
+      <div class="intro__badge">44문항 · 약 5분</div>
+      <h1 class="intro__title">
+        읽음 표시가 뜬 지 세 시간,<br />
+        당신은 지금 무슨 생각을 하나요?
+      </h1>
+      <p class="intro__body">
+        연락 텀, 서운함을 꺼내는 타이밍, 기념일에 대한 온도.
+        44개의 장면으로 연애할 때의 나를 4가지 축으로 그려드려요.
+      </p>
+
+      <ul class="intro__points">
+        <li><span class="dot"></span>성인 애착이론을 뼈대로 설계했어요</li>
+        <li><span class="dot"></span>연인이 없어도 답할 수 있어요</li>
+        <li><span class="dot"></span>답한 내용은 이 기기에만 저장돼요</li>
+      </ul>
+
+      <div class="intro__actions">
+        <button class="btn btn--primary btn--xl" id="btn-start">검사 시작하기</button>
+        <button class="btn btn--ghost btn--xl is-hidden" id="btn-resume">이어서 하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 문항 ─────────────────────────────────────── -->
+  <section class="screen screen--quiz" id="screen-quiz">
+    <header class="topbar">
+      <button class="topbar__back" id="btn-back" aria-label="이전 질문">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="topbar__meta">
+        <span class="topbar__count"><b id="q-index">1</b> / <span id="q-total">44</span></span>
+      </div>
+      <button class="topbar__exit" id="btn-exit">그만두기</button>
+    </header>
+
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="44" aria-valuenow="0">
+      <div class="progress__fill" id="progress-fill"></div>
+    </div>
+
+    <div class="quiz">
+      <p class="quiz__scene" id="q-scene">상황</p>
+      <h2 class="quiz__question" id="q-text">질문</h2>
+
+      <div class="quiz__options" id="q-options">
+        <button class="option" data-side="A">
+          <span class="option__key">A</span>
+          <span class="option__label"></span>
+        </button>
+        <button class="option" data-side="B">
+          <span class="option__key">B</span>
+          <span class="option__label"></span>
+        </button>
+      </div>
+
+      <p class="quiz__hint">키보드 <kbd>1</kbd> <kbd>2</kbd> 로도 고를 수 있어요</p>
+    </div>
+  </section>
+
+  <!-- ── 결과 ─────────────────────────────────────── -->
+  <section class="screen screen--result" id="screen-result">
+    <div class="result">
+      <div class="result__hero">
+        <p class="result__eyebrow">연애할 때의 당신은</p>
+        <h1 class="result__code" id="r-code">SCEM</h1>
+        <p class="result__nick" id="r-nick">매일이 기념일인 사람</p>
+        <p class="result__tagline" id="r-tagline"></p>
+        <p class="result__attach" id="r-attachment"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">연애 성향 지표</h3>
+        <div class="bars" id="r-bars"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">이런 연애를 해요</h3>
+        <p class="card__body" id="r-desc"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">이런 장면에서 드러나요</h3>
+        <ul class="traits" id="r-traits"></ul>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">이런 점은 조심해요</h3>
+        <p class="card__body" id="r-watch"></p>
+      </div>
+
+      <div class="card card--pair">
+        <h3 class="card__title">잘 맞는 유형</h3>
+        <div class="pair" id="r-pair"></div>
+      </div>
+
+      <a class="crosslink" href="./mbti.html">
+        <span class="crosslink__label">평소의 나도 궁금하다면</span>
+        <span class="crosslink__title">동네 성격 검사 52문항 하러 가기</span>
+      </a>
+
+      <div class="result__actions">
+        <button class="btn btn--primary btn--xl" id="btn-share">결과 복사하기</button>
+        <button class="btn btn--secondary btn--xl" id="btn-restart">다시 검사하기</button>
+      </div>
+      <p class="result__foot">
+        애착이론·사랑의 색깔 이론을 참고해 만든 재미용 검사예요.
+        임상 진단이나 공식 심리검사가 아니에요.
+      </p>
+    </div>
+  </section>
+
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite"></div>
+</div>
+
+<script src="./love-questions.js"></script>
+<script src="./love-types.js"></script>
+<script src="./engine.js"></script>
+<script>
+  QuizEngine.mount({
+    storageKey: 'dongne-love/v1',
+    questions: LOVE_QUESTIONS,
+    types: LOVE_TYPES,
+    axes: LOVE_AXES,
+    shareText: (code, t) =>
+      `제 연애 유형은 ${code} · ${t.nick}이에요.\n"${t.tagline}"\n애착 유형: ${t.attachment}\n\n연애 유형 검사 44문항`,
+  });
+</script>
+</body>
+</html>
