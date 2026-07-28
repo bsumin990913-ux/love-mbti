@@ -47,8 +47,17 @@
       <ul class="intro__points">
         <li><span class="dot"></span>성인 애착이론을 뼈대로 설계했어요</li>
         <li><span class="dot"></span>연인이 없어도 답할 수 있어요</li>
-        <li><span class="dot"></span>답한 내용은 이 기기에만 저장돼요</li>
+        <li><span class="dot"></span>이름과 답변은 결과 정리용으로 저장돼요</li>
       </ul>
+
+      <div class="namefield">
+        <label class="namefield__label" for="tester-name">검사하시는 분의 이름</label>
+        <input class="namefield__input" id="tester-name" type="text"
+               maxlength="20" placeholder="이름 또는 닉네임"
+               autocomplete="nickname" enterkeyhint="go"
+               aria-describedby="tester-name-error" />
+        <p class="namefield__error" id="tester-name-error" role="alert"></p>
+      </div>
 
       <div class="intro__actions">
         <button class="btn btn--primary btn--xl" id="btn-start">검사 시작하기</button>
@@ -99,7 +108,7 @@
   <section class="screen screen--result" id="screen-result">
     <div class="result">
       <div class="result__hero">
-        <p class="result__eyebrow">연애할 때의 당신은</p>
+        <p class="result__eyebrow"><b class="result__who" id="r-who"></b> 연애할 때의 당신은</p>
         <h1 class="result__code" id="r-code">SCEM</h1>
         <p class="result__nick" id="r-nick">매일이 기념일인 사람</p>
         <p class="result__tagline" id="r-tagline"></p>
@@ -131,6 +140,19 @@
         <div class="pair" id="r-pair"></div>
       </div>
 
+      <div class="card">
+        <div class="card__head">
+          <h3 class="card__title">내가 고른 답</h3>
+          <button class="btn btn--chip" type="button" id="btn-copy-answers">전체 복사</button>
+        </div>
+        <details class="review">
+          <summary class="review__toggle">
+            <span><span id="r-review-count">44</span>문항 모두 보기</span>
+          </summary>
+          <ol class="review__list" id="r-answers"></ol>
+        </details>
+      </div>
+
       <a class="crosslink" href="./mbti.html">
         <span class="crosslink__label">평소의 나도 궁금하다면</span>
         <span class="crosslink__title">동네 성격 검사 52문항 하러 가기</span>
@@ -138,7 +160,8 @@
 
       <div class="result__actions">
         <button class="btn btn--primary btn--xl" id="btn-share">결과 복사하기</button>
-        <button class="btn btn--secondary btn--xl" id="btn-restart">다시 검사하기</button>
+        <button class="btn btn--secondary btn--xl" id="btn-download">txt 파일로 저장</button>
+        <button class="btn btn--ghost btn--xl" id="btn-restart">다시 검사하기</button>
       </div>
       <p class="result__foot">
         애착이론·사랑의 색깔 이론을 참고해 만든 재미용 검사예요.
@@ -156,6 +179,8 @@
 <script>
   QuizEngine.mount({
     storageKey: 'dongne-love/v1',
+    testId: 'love',
+    testLabel: '연애 유형 검사',
     questions: LOVE_QUESTIONS,
     types: LOVE_TYPES,
     axes: LOVE_AXES,

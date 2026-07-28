@@ -74,6 +74,19 @@
 }
 .theme-love .dot { background: var(--primary); }
 
+.theme-love .namefield__input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid transparent;
+  border-radius: var(--r-full);
+  padding: 0 var(--sp-5);
+  box-shadow: var(--shadow-card);
+}
+.theme-love .namefield__input:hover { border-color: var(--bloom-deep); }
+.theme-love .namefield__input:focus {
+  outline-color: var(--primary);
+  background: #ffffff;
+}
+
 /* ── 문항 ─────────────────────────────────────────── */
 .theme-love .topbar { background: transparent; }
 .theme-love .progress { background: rgba(255, 255, 255, 0.7); }
@@ -149,6 +162,22 @@
   background: #ffffff;
   border-color: var(--hairline);
   color: var(--primary-text);
+}
+
+/* ── 내가 고른 답 ─────────────────────────────────── */
+.theme-love .btn--chip {
+  background: var(--brand-tint);
+  border-color: transparent;
+  color: var(--primary-text);
+}
+.theme-love .btn--chip:hover { background: var(--bloom); color: #7a3b4d; }
+
+.theme-love .review__toggle { background: var(--brand-tint); border-radius: var(--r-full); }
+.theme-love .review__item { border-top-color: var(--hairline); }
+.theme-love .review__no { background: var(--brand-tint); }
+.theme-love .review__pole {
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .theme-love .crosslink {

@@ -99,6 +99,20 @@ body { min-height: 100dvh; }
 .btn--secondary:active { transform: scale(0.98); }
 .btn--ghost { background: transparent; color: var(--text-secondary); font-weight: 600; height: 44px; }
 .btn--ghost:hover { color: var(--foreground); }
+/* 카드 제목 옆에 붙는 작은 보조 버튼 */
+.btn--chip {
+  flex: none;
+  height: 32px;
+  padding: 0 var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.btn--chip:hover { background: var(--gray-200); color: var(--foreground); }
+.btn--chip:active { transform: scale(0.96); }
 .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 kbd {
@@ -189,10 +203,51 @@ kbd {
   background: var(--primary);
 }
 .intro__actions {
-  margin-top: var(--sp-10);
+  margin-top: var(--sp-6);
   display: grid;
   gap: var(--sp-2);
 }
+
+/* ── 이름 입력 ────────────────────────────────────── */
+.namefield { margin-top: var(--sp-8); }
+.namefield__label {
+  display: block;
+  margin-bottom: var(--sp-2);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.namefield__input {
+  width: 100%;
+  height: 52px;
+  padding: 0 var(--sp-4);
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  /* 16px 미만이면 iOS 사파리가 포커스 때 화면을 확대한다 */
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.namefield__input::placeholder { color: var(--gray-500); }
+.namefield__input:hover { border-color: var(--gray-500); }
+.namefield__input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+.namefield__input.is-invalid { border-color: var(--error); }
+.namefield__input.is-invalid:focus { outline-color: var(--error); }
+.namefield__error {
+  margin: var(--sp-2) 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--error);
+}
+.namefield__error:empty { display: none; }
 
 /* ─────────────────────────────────────────────────────
    상단 바 · 진행률
@@ -381,6 +436,18 @@ kbd {
   letter-spacing: -0.02em;
   color: var(--foreground);
 }
+/* 제목 오른쪽에 보조 버튼이 붙는 카드 */
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+.card__head .card__title { margin: 0; }
+
+.result__who { font-weight: 700; color: var(--foreground); }
+.result__who:empty { display: none; }
 
 .bars { display: grid; gap: var(--sp-5); }
 .bar__head {
@@ -460,6 +527,110 @@ kbd {
   line-height: 1.5;
   letter-spacing: -0.02em;
   color: var(--foreground);
+}
+
+/* ── 내가 고른 답 ─────────────────────────────────
+   52문항을 펼쳐두면 결과 화면이 너무 길어져서 details 로 접어둔다.
+   네이티브 요소라 키보드·스크린리더 동작을 따로 만들지 않아도 된다 */
+.review__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  list-style: none;
+}
+.review__toggle::-webkit-details-marker { display: none; }
+.review__toggle::after {
+  content: '⌄';
+  font-size: 16px;
+  line-height: 1;
+  transform: translateY(-2px);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+.review[open] .review__toggle::after { transform: rotate(180deg) translateY(-1px); }
+.review__toggle:hover { color: var(--foreground); }
+.review__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.review__list {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-5);
+}
+.review__item {
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--hairline);
+}
+.review__item:first-child { padding-top: 0; border-top: 0; }
+
+.review__scene {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-1);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.review__no {
+  flex: none;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--sp-1);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.review__q {
+  margin: 0 0 var(--sp-3);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.review__pick {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.review__pole {
+  flex: none;
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+/* 고르지 않은 쪽. 취소선 대신 흐리게 — 틀린 답이 아니라 안 고른 답이다.
+   읽으라고 남겨둔 문장이라 gray-500 이 아니라 text-secondary 를 쓴다 */
+.review__skip {
+  margin: var(--sp-2) 0 0 30px;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
 }
 
 /* 다른 검사로 넘어가는 링크 */

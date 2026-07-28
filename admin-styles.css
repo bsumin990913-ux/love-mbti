@@ -1,0 +1,275 @@
+/* ─────────────────────────────────────────────────────
+   관리자 페이지 — styles.css 위에 얹는 레이어.
+   검사 화면(480px 모바일 폭)과 달리 표를 훑어야 해서 폭을 넓게 쓴다.
+   ───────────────────────────────────────────────────── */
+.theme-admin {
+  --primary:        #2f3540;
+  --primary-hover:  #454c59;
+  --primary-pressed:#22272f;
+  --primary-text:   #2f3540;
+  --background:     #f2f3f6;
+  background: var(--background);
+}
+
+.admin {
+  max-width: 760px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 0 0 var(--sp-16);
+}
+
+.btn--danger { color: #b3160b; }
+.btn--danger:hover { background: #ffecea; color: #8f110a; }
+
+/* ── 로그인 ───────────────────────────────────────── */
+.login {
+  padding: var(--sp-16) var(--sp-5) var(--sp-10);
+  max-width: 420px;
+  margin: 0 auto;
+}
+.login__title {
+  margin: 0 0 var(--sp-2);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.login__body {
+  margin: 0 0 var(--sp-8);
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.login__form { display: grid; gap: 0; }
+.login__form .btn { margin-top: var(--sp-4); }
+
+.setup {
+  margin-top: var(--sp-10);
+  padding: var(--sp-5);
+  background: var(--canvas);
+  border-radius: var(--r-lg);
+}
+.setup__title {
+  margin: 0 0 var(--sp-2);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.setup__body {
+  margin: 0 0 var(--sp-4);
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.setup__steps {
+  margin: 0 0 var(--sp-5);
+  padding-left: var(--sp-5);
+  display: grid;
+  gap: var(--sp-3);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.setup__steps code {
+  padding: 1px var(--sp-1);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ── 상단 바 ──────────────────────────────────────── */
+.adminbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-8) var(--sp-5) var(--sp-5);
+}
+.adminbar__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.adminbar__meta {
+  margin: var(--sp-1) 0 0;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+/* ── 검색 · 필터 · 내보내기 ───────────────────────── */
+.tools {
+  padding: 0 var(--sp-5) var(--sp-5);
+  display: grid;
+  gap: var(--sp-3);
+}
+.tools__search {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--sp-4);
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.tools__search:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+.tools__filters,
+.tools__exports { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+
+.chip {
+  height: 32px;
+  padding: 0 var(--sp-4);
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--gray-500); color: var(--foreground); }
+.chip.is-on {
+  background: var(--foreground);
+  border-color: var(--foreground);
+  color: var(--canvas);
+}
+.chip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.banner {
+  margin: 0 var(--sp-5) var(--sp-4);
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: #fff8e5;
+  border: 1px solid #f5e2b0;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: #6b5312;
+}
+
+/* ── 목록 ─────────────────────────────────────────── */
+.rows { list-style: none; margin: 0; padding: 0 var(--sp-5); display: grid; gap: var(--sp-2); }
+.row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--canvas);
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+.row:hover { border-color: var(--gray-500); }
+.row:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.row__main { display: grid; gap: 2px; min-width: 0; }
+.row__name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.row__date { font-size: 12px; letter-spacing: -0.02em; color: var(--text-secondary); }
+
+.row__side {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: right;
+}
+.row__tag {
+  padding: 2px var(--sp-2);
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+/* 검사 종류는 색으로만 구분하지 않는다 — 라벨 글자가 이미 다르다 */
+.row__tag--mbti { background: #fff0e5; color: #a34205; }
+.row__tag--love { background: #ffeef1; color: #a13054; }
+.row__code {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--foreground);
+}
+.row__nick {
+  max-width: 130px;
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: var(--sp-10) 0;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+/* ── 상세 ─────────────────────────────────────────── */
+.detail { padding: 0 var(--sp-5); }
+.detail .card { border-radius: var(--r-lg); margin-top: var(--sp-3); }
+.detail__eyebrow {
+  margin: 0 0 var(--sp-1);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.detail__name {
+  margin: 0 0 var(--sp-5);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.detail__facts { margin: 0; display: grid; gap: var(--sp-3); }
+.detail__facts > div { display: flex; gap: var(--sp-4); }
+.detail__facts dt {
+  flex: none;
+  width: 72px;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+.detail__facts dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.detail__actions {
+  margin-top: var(--sp-5);
+  display: flex;
+  gap: var(--sp-2);
+}
+
+/* 화면이 좁으면 목록 한 줄을 위아래로 쌓는다 */
+@media (max-width: 520px) {
+  .row { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+  .row__side { text-align: left; }
+  .row__nick { max-width: none; }
+}

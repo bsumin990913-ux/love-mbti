@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>응답 관리 · 오늘의 검사</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="./admin-styles.css" />
+</head>
+<body class="theme-admin">
+<div class="admin">
+
+  <!-- ── 로그인 ───────────────────────────────────── -->
+  <section class="screen is-active" id="screen-login">
+    <div class="login">
+      <a class="homelink" href="./index.html">사이트로 돌아가기</a>
+      <h1 class="login__title">응답 관리</h1>
+      <p class="login__body">검사한 사람과 각자 고른 답을 볼 수 있어요.</p>
+
+      <form class="login__form" id="login-form">
+        <label class="namefield__label" for="admin-key">관리자 비밀번호</label>
+        <input class="namefield__input" id="admin-key" type="password"
+               autocomplete="current-password" enterkeyhint="go"
+               aria-describedby="login-error" />
+        <p class="namefield__error" id="login-error" role="alert"></p>
+        <button class="btn btn--primary btn--xl" type="submit" id="btn-login">들어가기</button>
+      </form>
+
+      <div class="setup is-hidden" id="setup-guide">
+        <h2 class="setup__title">아직 저장소가 연결되지 않았어요</h2>
+        <p class="setup__body">
+          아래 순서로 한 번만 연결하면 모든 기기의 검사 결과가 여기 모여요.
+          연결 전까지는 이 브라우저에 남은 기록만 볼 수 있어요.
+        </p>
+        <ol class="setup__steps">
+          <li>Vercel 프로젝트 → <b>Storage</b> → <b>Marketplace</b> 에서 <b>Upstash for Redis</b> 를 만든다</li>
+          <li>이 프로젝트에 연결하면 <code>KV_REST_API_URL</code>, <code>KV_REST_API_TOKEN</code> 이 자동으로 들어간다</li>
+          <li><b>Settings → Environment Variables</b> 에서 <code>ADMIN_PASSWORD</code> 를 직접 추가한다</li>
+          <li>다시 배포(Redeploy)한다</li>
+        </ol>
+        <button class="btn btn--secondary btn--xl" type="button" id="btn-local">
+          이 브라우저 기록만 보기
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 목록 ─────────────────────────────────────── -->
+  <section class="screen" id="screen-list">
+    <header class="adminbar">
+      <div>
+        <h1 class="adminbar__title">응답 관리</h1>
+        <p class="adminbar__meta" id="list-meta">불러오는 중…</p>
+      </div>
+      <button class="btn btn--chip" type="button" id="btn-reload">새로고침</button>
+    </header>
+
+    <div class="tools">
+      <input class="tools__search" id="search" type="search"
+             placeholder="이름으로 찾기" autocomplete="off" enterkeyhint="search" />
+      <div class="tools__filters" id="filters" role="group" aria-label="검사 종류">
+        <button class="chip is-on" type="button" data-test="all">전체</button>
+        <button class="chip" type="button" data-test="mbti">성격</button>
+        <button class="chip" type="button" data-test="love">연애</button>
+      </div>
+      <div class="tools__exports">
+        <button class="btn btn--chip" type="button" id="btn-csv">CSV 내보내기</button>
+        <button class="btn btn--chip" type="button" id="btn-json">JSON 내보내기</button>
+        <button class="btn btn--chip btn--danger" type="button" id="btn-wipe">전체 삭제</button>
+      </div>
+    </div>
+
+    <div class="banner is-hidden" id="local-banner" role="status"></div>
+
+    <ul class="rows" id="rows"></ul>
+    <p class="empty is-hidden" id="empty">아직 기록이 없어요.</p>
+  </section>
+
+  <!-- ── 상세 ─────────────────────────────────────── -->
+  <section class="screen" id="screen-detail">
+    <header class="adminbar">
+      <button class="btn btn--chip" type="button" id="btn-back-list">← 목록</button>
+      <button class="btn btn--chip btn--danger" type="button" id="btn-delete">이 기록 삭제</button>
+    </header>
+    <div class="detail" id="detail"></div>
+  </section>
+
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite"></div>
+</div>
+
+<!-- 문항 본문은 저장하지 않는다. 여기서 원본 문항과 맞춰 보여준다 -->
+<script src="./questions.js"></script>
+<script src="./love-questions.js"></script>
+<script src="./admin.js"></script>
+</body>
+</html>
