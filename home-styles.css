@@ -7,6 +7,9 @@
   --love-bloom:   #ffd1d5;
   --love-lemon:   #faffc7;
   --love-ink:     #7f5c69;
+  --ideal-navy:   #364c84;
+  --ideal-sky:    #95b1ee;
+  --ideal-lime:   #e7f1a8;
   --shadow-card:  0 2px 12px rgba(33, 33, 36, 0.06);
 }
 
@@ -73,6 +76,12 @@
 .pick--love .blob--a { background: rgba(255, 123, 156, 0.22); }
 .pick--love .blob--b { background: rgba(255, 255, 255, 0.55); }
 
+.pick--ideal .pick__art {
+  background: linear-gradient(135deg, var(--ideal-lime) 0%, var(--ideal-sky) 100%);
+}
+.pick--ideal .blob--a { background: rgba(54, 76, 132, 0.20); }
+.pick--ideal .blob--b { background: rgba(255, 253, 245, 0.62); }
+
 .pick__body { padding: var(--sp-5); }
 
 .pick__badge {
@@ -85,6 +94,7 @@
 }
 .pick--mbti .pick__badge { background: var(--brand-tint); color: #a34205; }
 .pick--love .pick__badge { background: #fff2f4; color: #a13054; }
+.pick--ideal .pick__badge { background: #eef2fc; color: #364c84; }
 
 .pick__title {
   margin: var(--sp-3) 0 var(--sp-2);
@@ -127,6 +137,8 @@
    버튼 배경일 때만 브랜드 색을 쓰고, 링크 글자는 어둡게 내린 값을 쓴다 */
 .pick--mbti .pick__go { color: #a34205; }
 .pick--love .pick__go { color: #a13054; }
+/* 남색은 흰 배경에서 8.32:1 이라 따로 내리지 않고 그대로 쓴다 */
+.pick--ideal .pick__go { color: #364c84; }
 
 .home__foot {
   margin: auto 0 0;

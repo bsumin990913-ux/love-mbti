@@ -20,8 +20,9 @@
   const QUESTION_SETS = {
     mbti: typeof QUESTIONS !== 'undefined' ? QUESTIONS : [],
     love: typeof LOVE_QUESTIONS !== 'undefined' ? LOVE_QUESTIONS : [],
+    ideal: typeof IDEAL_QUESTIONS !== 'undefined' ? IDEAL_QUESTIONS : [],
   };
-  const TEST_LABELS = { mbti: '동네 성격 검사', love: '연애 유형 검사' };
+  const TEST_LABELS = { mbti: '동네 성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
 
   let adminKey = '';
   let records = [];
@@ -161,7 +162,7 @@
       return acc;
     }, {});
     $('list-meta').textContent = records.length
-      ? `전체 ${records.length}명 · 성격 ${counts.mbti || 0} · 연애 ${counts.love || 0}`
+      ? `전체 ${records.length}명 · 성격 ${counts.mbti || 0} · 연애 ${counts.love || 0} · 이상형 ${counts.ideal || 0}`
       : '아직 기록이 없어요';
 
     $('empty').classList.toggle('is-hidden', rows.length > 0);

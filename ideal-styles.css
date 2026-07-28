@@ -1,0 +1,191 @@
+/* ─────────────────────────────────────────────────────
+   이상형 검사 테마 — Sky(#95B1EE) × Lime(#E7F1A8) × Navy(#364C84)
+   styles.css 위에 얹는 레이어.
+
+   대비 배정 근거 (WCAG AA 4.5:1 기준)
+     Sky #95B1EE 는 흰 글씨 2.14:1 / 남색 글씨 3.88:1 로 둘 다 본문에 못 쓴다.
+     그래서 Sky 는 배경 그라데이션과 장식 면에만 쓰고, 글자가 얹히는 자리는
+     Lime(남색 글씨 6.95:1) 또는 Navy(흰 글씨 8.32:1) 로 간다.
+   ───────────────────────────────────────────────────── */
+.theme-ideal {
+  /* 액션 남색 — 흰 글씨 8.32:1. 버튼 배경과 글자색을 한 값으로 쓸 수 있다 */
+  --primary:        #364c84;
+  --primary-hover:  #435c9c;
+  --primary-pressed:#2b3d6b;
+  --sky:            #95b1ee;
+  --sky-deep:       #7a9be4;
+  --lime:           #e7f1a8;
+  --lime-deep:      #dae88c;
+
+  --canvas:         #fffdf5;  /* 참고 팔레트의 베이스 화이트 — 순백보다 덜 시리다 */
+  --background:     #f4f6fd;
+  --surface:        #fffdf5;
+  --foreground:     #1f2a4a;  /* 남색 먹 — 순수 회색보다 Sky 와 붙는다 */
+  --muted:          #59637f;  /* 배경(#f4f6fd) 위 5.53:1 */
+  --gray-200:       #e4e9f7;
+  --gray-500:       #a9b4d0;  /* 비활성 아이콘 전용. 텍스트에는 쓰지 않는다 */
+  --text-secondary: #59637f;  /* 흰 5.98:1 / 배경 5.53:1 */
+  --primary-text:   #364c84;  /* 액션 남색이 이미 8.32:1 이라 따로 내릴 필요가 없다 */
+  --hairline:       #e4e9f7;
+  --brand-tint:     #eef2fc;
+
+  --shadow-soft:  0 8px 24px rgba(54, 76, 132, 0.20);
+  --shadow-card:  0 2px 12px rgba(54, 76, 132, 0.08);
+}
+
+/* 배경 그라데이션. background-attachment: fixed 와 backdrop-filter 는
+   모바일에서 스크롤마다 재합성을 유발해 쓰지 않는다 */
+.theme-ideal {
+  background:
+    radial-gradient(900px 520px at 84% -10%, var(--sky) 0%, transparent 60%),
+    radial-gradient(720px 440px at -12% 26%, var(--lime) 0%, transparent 56%),
+    var(--background);
+  background-repeat: no-repeat;
+}
+.theme-ideal .app { background: transparent; }
+
+/* ── 공통 요소 ────────────────────────────────────── */
+.theme-ideal .btn { border-radius: var(--r-full); font-weight: 700; }
+.theme-ideal .btn--primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-pressed) 100%);
+  box-shadow: var(--shadow-soft);
+}
+.theme-ideal .btn--primary:hover {
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+}
+.theme-ideal .btn--primary:active {
+  background: linear-gradient(135deg, var(--primary-pressed) 0%, #22315a 100%);
+}
+.theme-ideal .btn--secondary {
+  background: var(--canvas);
+  color: var(--primary-text);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── 인트로 ───────────────────────────────────────── */
+.theme-ideal .intro__badge {
+  background: var(--lime);
+  color: #4a5520;  /* Lime 배경 대비 5.6:1 */
+}
+.theme-ideal .intro__points {
+  background: rgba(255, 253, 245, 0.88);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+.theme-ideal .dot { background: var(--primary); }
+
+.theme-ideal .namefield__input {
+  background: rgba(255, 253, 245, 0.92);
+  border: 1px solid transparent;
+  border-radius: var(--r-full);
+  padding: 0 var(--sp-5);
+  box-shadow: var(--shadow-card);
+}
+.theme-ideal .namefield__input:hover { border-color: var(--sky-deep); }
+.theme-ideal .namefield__input:focus {
+  outline-color: var(--primary);
+  background: #ffffff;
+}
+
+/* ── 문항 ─────────────────────────────────────────── */
+.theme-ideal .topbar { background: transparent; }
+.theme-ideal .progress { background: rgba(255, 255, 255, 0.72); }
+.theme-ideal .progress__fill {
+  background: linear-gradient(90deg, var(--lime-deep) 0%, var(--sky-deep) 55%, var(--primary) 100%);
+}
+.theme-ideal .quiz__scene { color: var(--primary-text); }
+
+.theme-ideal .option {
+  background: rgba(255, 253, 245, 0.9);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+.theme-ideal .option:hover { border-color: var(--sky-deep); }
+.theme-ideal .option.is-picked {
+  background: var(--canvas);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-soft);
+}
+/* Sky 위에는 어떤 글자색도 AA 를 못 넘겨서 키 칩은 Lime 으로 간다 (6.95:1) */
+.theme-ideal .option__key {
+  background: var(--lime);
+  border-color: transparent;
+  color: #4a5520;
+}
+.theme-ideal .option.is-picked .option__key {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+.theme-ideal kbd { background: rgba(255, 253, 245, 0.9); border-color: var(--hairline); }
+
+/* ── 결과 ─────────────────────────────────────────── */
+.theme-ideal .result { background: transparent; }
+.theme-ideal .result__hero { background: transparent; padding-bottom: var(--sp-10); }
+.theme-ideal .result__code {
+  color: var(--primary-text);
+  letter-spacing: 0.04em;
+}
+.theme-ideal .result__attach {
+  display: inline-block;
+  margin: var(--sp-4) 0 0;
+  padding: var(--sp-1) var(--sp-4);
+  border-radius: var(--r-full);
+  background: var(--lime);
+  color: #4a5520;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.theme-ideal .result__attach:empty { display: none; }
+
+.theme-ideal .card {
+  margin: var(--sp-3) var(--sp-4) 0;
+  padding: var(--sp-6) var(--sp-5);
+  background: rgba(255, 253, 245, 0.92);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.theme-ideal .bar__track { background: var(--gray-200); }
+.theme-ideal .bar__fill {
+  background: linear-gradient(90deg, var(--sky) 0%, var(--primary) 100%);
+}
+.theme-ideal .bar__fill--right {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--sky) 100%);
+}
+.theme-ideal .traits li::before { background: var(--primary); }
+
+.theme-ideal .pair__item { background: var(--brand-tint); border-radius: 14px; }
+.theme-ideal .pair__code {
+  background: var(--canvas);
+  border-color: var(--hairline);
+  color: var(--primary-text);
+}
+
+/* ── 내가 고른 답 ─────────────────────────────────── */
+.theme-ideal .btn--chip {
+  background: var(--brand-tint);
+  border-color: transparent;
+  color: var(--primary-text);
+}
+.theme-ideal .btn--chip:hover { background: var(--sky); color: #253763; }
+
+.theme-ideal .review__toggle { background: var(--brand-tint); border-radius: var(--r-full); }
+.theme-ideal .review__item { border-top-color: var(--hairline); }
+.theme-ideal .review__no { background: var(--brand-tint); }
+.theme-ideal .review__pole {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.theme-ideal .crosslink {
+  margin: var(--sp-3) var(--sp-4) 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--lime) 0%, var(--sky) 100%);
+}
+.theme-ideal .crosslink__label { color: #414d6e; }
+.theme-ideal .crosslink__title { color: #253763; }
+
+.theme-ideal .snackbar { background: #2b3d6b; border-radius: var(--r-full); }

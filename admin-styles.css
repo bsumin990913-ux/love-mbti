@@ -206,6 +206,7 @@
 /* 검사 종류는 색으로만 구분하지 않는다 — 라벨 글자가 이미 다르다 */
 .row__tag--mbti { background: #fff0e5; color: #a34205; }
 .row__tag--love { background: #ffeef1; color: #a13054; }
+.row__tag--ideal { background: #eef2fc; color: #364c84; }
 .row__code {
   font-size: 13px;
   font-weight: 700;
