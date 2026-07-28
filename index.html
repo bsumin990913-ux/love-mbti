@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>오늘의 검사</title>
-<meta name="description" content="일상 속 순간으로 알아보는 성격 유형과 연애 유형 검사" />
+<title>성격·연애 유형·이상형 검사 모음 | 오늘의 검사</title>
+<meta name="description" content="무료 온라인 심리테스트 모음. 52문항 성격 유형 검사, 애착이론 기반 44문항 연애 유형 검사, 20문항 이상형 검사까지 회원가입 없이 2~6분 만에 결과를 확인하세요." />
+<meta name="keywords" content="심리테스트, 성격검사, 연애유형검사, 이상형검사, 무료심리테스트, 온라인심리테스트, 성격유형테스트, 애착유형검사, MBTI테스트, 커플테스트" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
 
 <!-- 배포 도메인: https://love-mbti-mu.vercel.app (canonical · og:url · og:image · sitemap.xml 이 같은 값을 쓴다) -->
 <link rel="canonical" href="https://love-mbti-mu.vercel.app/" />
@@ -16,16 +18,29 @@
 <meta property="og:site_name" content="오늘의 검사" />
 <meta property="og:locale" content="ko_KR" />
 <meta property="og:url" content="https://love-mbti-mu.vercel.app/" />
-<meta property="og:title" content="오늘의 검사 · 성격 유형과 연애 유형" />
-<meta property="og:description" content="사소한 순간들로 나를 그려봐요. 동네 성격 검사 52문항, 연애 유형 검사 44문항." />
+<meta property="og:title" content="성격·연애 유형·이상형 검사 모음 | 오늘의 검사" />
+<meta property="og:description" content="무료 온라인 심리테스트 모음. 성격 검사 52문항, 연애 유형 검사 44문항, 이상형 검사 20문항. 회원가입 없이 바로 시작해요." />
 <meta property="og:image" content="https://love-mbti-mu.vercel.app/og-home.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="오늘의 검사 — 성격 · 연애 유형 검사" />
+<meta property="og:image:alt" content="오늘의 검사 — 성격 · 연애 유형 · 이상형 검사" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="성격·연애 유형·이상형 검사 모음 | 오늘의 검사" />
+<meta name="twitter:description" content="무료 온라인 심리테스트 모음. 성격 검사 52문항, 연애 유형 검사 44문항, 이상형 검사 20문항." />
+<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-home.png" />
 
 <link rel="stylesheet" href="./styles.css" />
 <link rel="stylesheet" href="./home-styles.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "오늘의 검사",
+  "url": "https://love-mbti-mu.vercel.app/",
+  "description": "무료 온라인 심리테스트 모음. 성격 유형 검사, 연애 유형 검사, 이상형 검사를 회원가입 없이 바로 해볼 수 있어요.",
+  "inLanguage": "ko"
+}
+</script>
 </head>
 <body class="theme-home">
 <div class="app">
@@ -44,7 +59,7 @@
         </div>
         <div class="pick__body">
           <span class="pick__badge">52문항 · 약 6분</span>
-          <h2 class="pick__title">동네 성격 검사</h2>
+          <h2 class="pick__title">성격 검사</h2>
           <p class="pick__desc">
             단체 사진에서 어디에 서는지, 단톡방 알림을 어떻게 두는지.
             평소의 나를 4가지 축으로 봐요.
@@ -91,9 +106,19 @@
       </a>
     </nav>
 
+    <div class="card adslot">
+      <span class="adslot__label">광고</span>
+      <!-- 카카오 애드핏 > 광고 단위 관리에서 발급받은 ID로 교체 -->
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-XXXXXXXXXXXXXXXX"
+           data-ad-width="300"
+           data-ad-height="250"></ins>
+    </div>
+
     <p class="home__foot">
       모두 재미로 보는 참고 자료예요. 심리 진단이 아니에요.
       검사 전에 적은 이름과 답변은 결과 정리용으로 저장돼요.
+      <br /><a href="./privacy.html">개인정보처리방침</a>
     </p>
   </main>
 </div>
@@ -115,5 +140,6 @@
       : `이어서 하기 · ${done}/${total}`;
   });
 </script>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 </html>

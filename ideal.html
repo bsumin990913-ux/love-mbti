@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>이상형 검사 · 20문항</title>
-<meta name="description" content="내가 어떤 사람에게 끌리는지 4축 16유형으로 알아보는 이상형 검사" />
+<title>이상형 검사 20문항 - 나의 연애 취향 테스트 | 오늘의 검사</title>
+<meta name="description" content="반한 이유, 답장 속도, 표현 방식과 주도권을 20가지 질문으로 알아보는 무료 이상형 검사. 회원가입 없이 약 2분 만에 나의 연애 취향과 4축 16유형 결과를 확인하세요." />
+<meta name="keywords" content="이상형 검사, 이상형 테스트, 연애 취향 테스트, 무료 심리테스트, 연애 성향 검사, 나의 이상형, 16유형 검사, 취향 테스트" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
 
 <!-- 배포 도메인: https://love-mbti-mu.vercel.app (canonical · og:url · og:image · sitemap.xml 이 같은 값을 쓴다) -->
 <link rel="canonical" href="https://love-mbti-mu.vercel.app/ideal.html" />
@@ -16,16 +18,33 @@
 <meta property="og:site_name" content="오늘의 검사" />
 <meta property="og:locale" content="ko_KR" />
 <meta property="og:url" content="https://love-mbti-mu.vercel.app/ideal.html" />
-<meta property="og:title" content="이상형 검사 · 20문항" />
-<meta property="og:description" content="난 이런 사람이 좋아요. 반한 이유, 답장 속도, 주도권까지. 20개의 질문으로 내 취향을 4가지 축으로 그려요." />
+<meta property="og:title" content="이상형 검사 20문항 - 나의 연애 취향 테스트" />
+<meta property="og:description" content="반한 이유부터 답장 속도와 주도권까지. 20가지 질문으로 나의 연애 취향과 4축 16유형을 약 2분 만에 확인하세요." />
 <meta property="og:image" content="https://love-mbti-mu.vercel.app/og-ideal.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="이상형 검사 20문항" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="이상형 검사 20문항 - 나의 연애 취향 테스트" />
+<meta name="twitter:description" content="20가지 질문으로 알아보는 무료 이상형 테스트. 회원가입 없이 약 2분." />
+<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-ideal.png" />
 
 <link rel="stylesheet" href="./styles.css" />
 <link rel="stylesheet" href="./ideal-styles.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "이상형 검사",
+  "url": "https://love-mbti-mu.vercel.app/ideal.html",
+  "description": "20가지 질문으로 나의 연애 취향과 이상형을 알아보는 무료 4축 16유형 검사.",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ko",
+  "isPartOf": { "@type": "WebSite", "name": "오늘의 검사", "url": "https://love-mbti-mu.vercel.app/" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" }
+}
+</script>
 </head>
 <body class="theme-ideal">
 <div class="app" id="app">
@@ -140,6 +159,20 @@
         <div class="pair" id="r-pair"></div>
       </div>
 
+      <div class="card card--pair">
+        <h3 class="card__title">취향이 가장 먼 유형</h3>
+        <div class="pair pair--worst" id="r-worst"></div>
+      </div>
+
+      <div class="card adslot">
+        <span class="adslot__label">광고</span>
+        <!-- 카카오 애드핏 > 광고 단위 관리에서 발급받은 ID로 교체 -->
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-XXXXXXXXXXXXXXXX"
+             data-ad-width="300"
+             data-ad-height="250"></ins>
+      </div>
+
       <div class="card">
         <div class="card__head">
           <h3 class="card__title">내가 고른 답</h3>
@@ -159,13 +192,13 @@
       </a>
 
       <div class="result__actions">
-        <button class="btn btn--primary btn--xl" id="btn-share">결과 복사하기</button>
-        <button class="btn btn--secondary btn--xl" id="btn-download">txt 파일로 저장</button>
+        <button class="btn btn--primary btn--xl" id="btn-share">결과 공유하기</button>
         <button class="btn btn--ghost btn--xl" id="btn-restart">다시 검사하기</button>
       </div>
       <p class="result__foot">
         취향을 정리해보는 재미용 검사예요. 심리 진단이 아니고,
         여기 안 나온 사람을 좋아하게 되는 일도 얼마든지 있어요.
+        <br /><a href="./privacy.html">개인정보처리방침</a>
       </p>
     </div>
   </section>
@@ -186,7 +219,10 @@
     axes: IDEAL_AXES,
     shareText: (code, t) =>
       `제 이상형은 ${code} · ${t.nick}이에요.\n"${t.tagline}"\n${t.attachment}\n\n이상형 검사 20문항`,
+    worstText: () =>
+      '끌리는 온도와 관계 범위, 표현 방식과 주도권 취향이 네 축 모두 반대인 유형이에요.',
   });
 </script>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 </html>

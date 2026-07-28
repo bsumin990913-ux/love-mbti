@@ -10,7 +10,7 @@
  */
 import { HASH_KEY, command, isConfigured, json, pruneIfNeeded } from './_store.js';
 
-const TESTS = { mbti: '동네 성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
+const TESTS = { mbti: '성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
 
 const NAME_MAX = 20;
 const ANSWERS_MAX = 100;

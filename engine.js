@@ -66,21 +66,34 @@ window.QuizEngine = (function () {
     }
   }
 
-  /** BOM(U+FEFF)을 붙여야 윈도우 메모장이 UTF-8 로 읽는다 */
-  function downloadText(filename, text) {
-    const blob = new Blob(['﻿' + text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  function currentPageUrl() {
+    try {
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = '';
+      return url.href;
+    } catch (_) {
+      return window.location.href;
+    }
   }
 
-  const safeFilePart = (v) => String(v).replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 30);
+  /**
+   * 지원 기기에서는 운영체제 공유 시트를 열고, 미지원 브라우저에서는
+   * 결과와 주소를 클립보드에 복사한다.
+   */
+  async function shareResult(title, text) {
+    const url = currentPageUrl();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        return 'shared';
+      } catch (error) {
+        if (error && error.name === 'AbortError') return 'cancelled';
+        /* 권한·브라우저 오류면 아래 복사 폴백으로 이어간다. */
+      }
+    }
+    return await copyText(`${text}\n\n${url}`) ? 'copied' : 'failed';
+  }
 
   function mount(config) {
     const { storageKey, questions, types, axes, testId, testLabel } = config;
@@ -97,7 +110,6 @@ window.QuizEngine = (function () {
       back:      $('btn-back'),
       exit:      $('btn-exit'),
       share:     $('btn-share'),
-      download:  $('btn-download'),
       copyAll:   $('btn-copy-answers'),
       restart:   $('btn-restart'),
       progress:  $('progress-fill'),
@@ -255,6 +267,16 @@ window.QuizEngine = (function () {
       return heading ? heading.textContent.trim() : '';
     }
 
+    /** 네 축에서 모두 반대 극을 고른 결과 코드를 만든다. */
+    function oppositeCode(code) {
+      const opposite = {};
+      axes.forEach((axis) => {
+        opposite[axis.left] = axis.right;
+        opposite[axis.right] = axis.left;
+      });
+      return code.split('').map((letter) => opposite[letter] || letter).join('');
+    }
+
     /** 결과 화면의 "내가 고른 답" 목록 */
     function renderReview() {
       setText('r-review-count', String(questions.length));
@@ -314,6 +336,15 @@ window.QuizEngine = (function () {
       out.push('', `[${titleOf('r-watch')}]`, t.watch);
       out.push('', `[${titleOf('r-pair')}]`,
         ...t.pair.map(([c, why]) => `· ${c} ${types[c].nick} — ${why}`));
+
+      const worstCode = oppositeCode(code);
+      const worstType = types[worstCode];
+      if (worstType) {
+        const why = config.worstText
+          ? config.worstText(worstCode, worstType, t)
+          : '네 가지 성향 축이 모두 반대라 서로의 기준을 자주 확인해야 해요.';
+        out.push('', `[${titleOf('r-worst')}]`, `· ${worstCode} ${worstType.nick} — ${why}`);
+      }
 
       out.push('', `[${titleOf('r-answers')}]`, answersText());
       out.push('', '재미로 보는 참고 자료예요. 심리 진단이 아니에요.');
@@ -412,6 +443,21 @@ window.QuizEngine = (function () {
           <span class="pair__why">${types[c].nick} — ${why}</span>
         </div>`).join(''));
 
+      const worstCode = oppositeCode(code);
+      const worstType = types[worstCode];
+      if (worstType) {
+        const why = config.worstText
+          ? config.worstText(worstCode, worstType, t)
+          : '네 가지 성향 축이 모두 반대라 서로의 기준을 자주 확인해야 해요.';
+        setHTML('r-worst', `
+          <div class="pair__item">
+            <span class="pair__code">${esc(worstCode)}</span>
+            <span class="pair__why">${esc(worstType.nick)} — ${esc(why)}</span>
+          </div>`);
+      } else {
+        setHTML('r-worst', '');
+      }
+
       renderReview();
       show(el.result);
       recordResult();
@@ -490,23 +536,16 @@ window.QuizEngine = (function () {
     });
 
     el.share.addEventListener('click', async () => {
-      snack(await copyText(shortText())
-        ? '결과를 복사했어요'
-        : '복사에 실패했어요. 다시 시도해 주세요');
+      const state = await shareResult(`${testLabel} 결과`, shortText());
+      if (state === 'shared') snack('결과를 공유했어요');
+      else if (state === 'copied') snack('공유 기능을 지원하지 않아 결과와 주소를 복사했어요');
+      else if (state === 'failed') snack('공유에 실패했어요. 다시 시도해 주세요');
     });
 
     el.copyAll.addEventListener('click', async () => {
       snack(await copyText(fullText())
         ? '답변까지 전부 복사했어요'
         : '복사에 실패했어요. 다시 시도해 주세요');
-    });
-
-    el.download.addEventListener('click', () => {
-      downloadText(
-        `${safeFilePart(testLabel)}_${safeFilePart(testerName)}_${lastScore.code}.txt`,
-        fullText(),
-      );
-      snack('txt 파일로 저장했어요');
     });
 
     /* ── 초기화 ──────────────────────────────────── */

@@ -29,8 +29,6 @@
   --hairline:       #e4e9f7;
   --brand-tint:     #eef2fc;
 
-  --shadow-soft:  0 8px 24px rgba(54, 76, 132, 0.20);
-  --shadow-card:  0 2px 12px rgba(54, 76, 132, 0.08);
 }
 
 /* 배경 그라데이션. background-attachment: fixed 와 backdrop-filter 는
@@ -45,10 +43,9 @@
 .theme-ideal .app { background: transparent; }
 
 /* ── 공통 요소 ────────────────────────────────────── */
-.theme-ideal .btn { border-radius: var(--r-full); font-weight: 700; }
+.theme-ideal .btn { border-radius: var(--r-md); font-weight: 700; }
 .theme-ideal .btn--primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-pressed) 100%);
-  box-shadow: var(--shadow-soft);
 }
 .theme-ideal .btn--primary:hover {
   background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
@@ -59,7 +56,7 @@
 .theme-ideal .btn--secondary {
   background: var(--canvas);
   color: var(--primary-text);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--hairline);
 }
 
 /* ── 인트로 ───────────────────────────────────────── */
@@ -69,17 +66,15 @@
 }
 .theme-ideal .intro__points {
   background: rgba(255, 253, 245, 0.88);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
+  border-radius: var(--r-lg);
 }
 .theme-ideal .dot { background: var(--primary); }
 
 .theme-ideal .namefield__input {
   background: rgba(255, 253, 245, 0.92);
-  border: 1px solid transparent;
-  border-radius: var(--r-full);
-  padding: 0 var(--sp-5);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 0 var(--sp-4);
 }
 .theme-ideal .namefield__input:hover { border-color: var(--sky-deep); }
 .theme-ideal .namefield__input:focus {
@@ -97,15 +92,13 @@
 
 .theme-ideal .option {
   background: rgba(255, 253, 245, 0.9);
-  border: 1px solid transparent;
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
 }
 .theme-ideal .option:hover { border-color: var(--sky-deep); }
 .theme-ideal .option.is-picked {
   background: var(--canvas);
   border-color: var(--primary);
-  box-shadow: var(--shadow-soft);
 }
 /* Sky 위에는 어떤 글자색도 AA 를 못 넘겨서 키 칩은 Lime 으로 간다 (6.95:1) */
 .theme-ideal .option__key {
@@ -141,11 +134,10 @@
 .theme-ideal .result__attach:empty { display: none; }
 
 .theme-ideal .card {
-  margin: var(--sp-3) var(--sp-4) 0;
+  margin: var(--sp-2) 0 0;
   padding: var(--sp-6) var(--sp-5);
   background: rgba(255, 253, 245, 0.92);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
+  border-radius: 0;
 }
 
 .theme-ideal .bar__track { background: var(--gray-200); }
@@ -157,7 +149,11 @@
 }
 .theme-ideal .traits li::before { background: var(--primary); }
 
-.theme-ideal .pair__item { background: var(--brand-tint); border-radius: 14px; }
+.theme-ideal .pair__item { background: var(--brand-tint); border-radius: var(--r-md); }
+.theme-ideal .pair--worst .pair__item {
+  background: rgba(255, 253, 245, 0.72);
+  border: 1px solid var(--hairline);
+}
 .theme-ideal .pair__code {
   background: var(--canvas);
   border-color: var(--hairline);
@@ -172,7 +168,7 @@
 }
 .theme-ideal .btn--chip:hover { background: var(--sky); color: #253763; }
 
-.theme-ideal .review__toggle { background: var(--brand-tint); border-radius: var(--r-full); }
+.theme-ideal .review__toggle { background: var(--brand-tint); border-radius: var(--r-md); }
 .theme-ideal .review__item { border-top-color: var(--hairline); }
 .theme-ideal .review__no { background: var(--brand-tint); }
 .theme-ideal .review__pole {
@@ -181,11 +177,11 @@
 }
 
 .theme-ideal .crosslink {
-  margin: var(--sp-3) var(--sp-4) 0;
-  border-radius: 20px;
+  margin: var(--sp-2) 0 0;
+  border-radius: 0;
   background: linear-gradient(135deg, var(--lime) 0%, var(--sky) 100%);
 }
 .theme-ideal .crosslink__label { color: #414d6e; }
 .theme-ideal .crosslink__title { color: #253763; }
 
-.theme-ideal .snackbar { background: #2b3d6b; border-radius: var(--r-full); }
+.theme-ideal .snackbar { background: #2b3d6b; border-radius: var(--r-md); }

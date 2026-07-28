@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /api/
 
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://love-mbti-mu.vercel.app/sitemap.xml

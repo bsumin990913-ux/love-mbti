@@ -10,7 +10,6 @@
   --ideal-navy:   #364c84;
   --ideal-sky:    #95b1ee;
   --ideal-lime:   #e7f1a8;
-  --shadow-card:  0 2px 12px rgba(33, 33, 36, 0.06);
 }
 
 .home {
@@ -40,47 +39,35 @@
 
 .pick {
   display: block;
-  border-radius: 20px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
   overflow: hidden;
   background: var(--canvas);
-  box-shadow: var(--shadow-card);
   text-decoration: none;
   color: inherit;
   transition: transform var(--motion-fast) var(--ease-standard),
-              box-shadow var(--motion-fast) var(--ease-standard);
+              border-color var(--motion-fast) var(--ease-standard);
 }
-.pick:hover { box-shadow: 0 6px 20px rgba(33, 33, 36, 0.1); }
+.pick:hover { border-color: var(--gray-500); }
 .pick:active { transform: scale(0.98); }
 .pick:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
 
-/* 카드 상단의 색 면 — 각 검사의 분위기를 미리 보여주는 자리 */
+/* 카드 상단의 색 면 — 각 검사의 분위기 사진을 미리 보여주는 자리.
+   pick-art/*.jpg 는 og 배경을 카드 비율(약 480x108)로 잘라 17KB 안팎으로 줄인 것 */
 .pick__art {
   position: relative;
   height: 108px;
   overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.blob {
-  position: absolute;
-  border-radius: var(--r-full);
-}
-.blob--a { width: 132px; height: 132px; top: -34px; right: -18px; }
-.blob--b { width: 76px;  height: 76px;  top: 46px;  right: 92px; }
+/* 사진이 배경을 채우므로 예전 blob 장식은 숨긴다 (HTML 은 그대로 둔다) */
+.blob { display: none; }
 
-.pick--mbti .pick__art { background: var(--brand-tint); }
-.pick--mbti .blob--a { background: rgba(255, 111, 15, 0.16); }
-.pick--mbti .blob--b { background: rgba(255, 111, 15, 0.09); }
-
-.pick--love .pick__art {
-  background: linear-gradient(135deg, var(--love-lemon) 0%, var(--love-bloom) 100%);
-}
-.pick--love .blob--a { background: rgba(255, 123, 156, 0.22); }
-.pick--love .blob--b { background: rgba(255, 255, 255, 0.55); }
-
-.pick--ideal .pick__art {
-  background: linear-gradient(135deg, var(--ideal-lime) 0%, var(--ideal-sky) 100%);
-}
-.pick--ideal .blob--a { background: rgba(54, 76, 132, 0.20); }
-.pick--ideal .blob--b { background: rgba(255, 253, 245, 0.62); }
+.pick--mbti  .pick__art { background-image: url('./pick-art/mbti.jpg'); }
+.pick--love  .pick__art { background-image: url('./pick-art/love.jpg'); }
+.pick--ideal .pick__art { background-image: url('./pick-art/ideal.jpg'); }
 
 .pick__body { padding: var(--sp-5); }
 
@@ -128,6 +115,7 @@
 .pick__go {
   display: block;
   margin-top: var(--sp-4);
+  text-align: right;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;

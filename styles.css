@@ -46,6 +46,13 @@
 
 * { box-sizing: border-box; }
 
+/* 모든 요소에서 한글을 어절 단위로 줄바꿈한다. 낱글자가 줄 끝에서
+   혼자 떨어지지 않게 한다 (html·body 상속으로는 일부 요소가 새는 걸 막는다) */
+*, *::before, *::after {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -106,7 +113,7 @@ body { min-height: 100dvh; }
   padding: 0 var(--sp-3);
   background: var(--surface);
   border: 1px solid var(--hairline);
-  border-radius: var(--r-full);
+  border-radius: var(--r-md);
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
@@ -330,7 +337,7 @@ kbd {
   text-align: left;
   background: var(--canvas);
   border: 1px solid var(--hairline);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   font-family: inherit;
   font-size: 16px;
   line-height: 1.5;
@@ -511,6 +518,10 @@ kbd {
   background: var(--surface);
   border-radius: var(--r-md);
 }
+.pair--worst .pair__item {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+}
 .pair__code {
   flex: none;
   padding: var(--sp-1) var(--sp-3);
@@ -673,6 +684,52 @@ kbd {
   text-align: center;
   letter-spacing: -0.02em;
 }
+.result__foot a { color: inherit; }
+
+/* ── 광고 슬롯 ─────────────────────────────────────
+   카카오 애드핏. .card 위에 얹어서 각 테마의 카드 배경·모서리를 그대로 따라간다.
+   data-ad-unit 은 애드핏 콘솔에서 발급받은 실제 광고 단위 ID로 교체해야 노출된다.
+   min-height 는 300x250 광고가 뜨기 전에도 자리를 미리 잡아 로딩 중 레이아웃이
+   밀리는 걸 막는다 */
+.adslot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 282px;
+}
+.adslot__label {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+/* ── 약관류 문서 페이지 (개인정보처리방침 등) ───────── */
+.doc { padding: var(--sp-8) var(--sp-5) var(--sp-12); }
+.doc__title {
+  margin: var(--sp-4) 0 var(--sp-2);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.doc__updated {
+  margin: 0 0 var(--sp-4);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.doc .card { border-radius: var(--r-lg); }
+.doc .card__body + .card__body { margin-top: var(--sp-3); }
+.doc ul {
+  margin: var(--sp-2) 0 0;
+  padding-left: 1.2em;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+.doc li { margin-bottom: var(--sp-1); }
+.doc a { color: var(--primary-text); }
 
 /* ─────────────────────────────────────────────────────
    스낵바 (§14 — gray-1000 배경, 아이콘 없음, 3초)

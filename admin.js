@@ -22,7 +22,7 @@
     love: typeof LOVE_QUESTIONS !== 'undefined' ? LOVE_QUESTIONS : [],
     ideal: typeof IDEAL_QUESTIONS !== 'undefined' ? IDEAL_QUESTIONS : [],
   };
-  const TEST_LABELS = { mbti: '동네 성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
+  const TEST_LABELS = { mbti: '성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
 
   let adminKey = '';
   let records = [];

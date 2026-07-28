@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>동네 성격 검사 · 52문항</title>
-<meta name="description" content="일상 속 52개의 순간으로 알아보는 나의 성격 유형" />
+<title>성격 유형 검사 52문항 - 무료 성격 테스트 | 오늘의 검사</title>
+<meta name="description" content="단체 사진, 단톡방 알림처럼 일상 속 52가지 장면으로 알아보는 무료 성격 유형 검사. 회원가입 없이 약 6분 만에 4축 16유형 결과를 확인하고 복사해 공유하세요." />
+<meta name="keywords" content="성격 유형 검사, 무료 성격 테스트, 성향 테스트, 온라인 심리테스트, 16유형 검사, 4축 성격 검사, 나의 성격 유형, MBTI 테스트" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
 
 <!-- 배포 도메인: https://love-mbti-mu.vercel.app (canonical · og:url · og:image · sitemap.xml 이 같은 값을 쓴다) -->
 <link rel="canonical" href="https://love-mbti-mu.vercel.app/mbti.html" />
@@ -16,15 +18,32 @@
 <meta property="og:site_name" content="오늘의 검사" />
 <meta property="og:locale" content="ko_KR" />
 <meta property="og:url" content="https://love-mbti-mu.vercel.app/mbti.html" />
-<meta property="og:title" content="동네 성격 검사 · 52문항" />
-<meta property="og:description" content="단체 사진에서 어디에 서는지, 단톡방 알림을 어떻게 두는지. 아주 사소한 52개의 순간으로 성격 유형을 찾아드려요." />
+<meta property="og:title" content="성격 유형 검사 52문항 - 무료 성격 테스트" />
+<meta property="og:description" content="일상 속 52가지 장면으로 알아보는 무료 성격 테스트. 회원가입 없이 약 6분 만에 4축 16유형 결과를 확인하세요." />
 <meta property="og:image" content="https://love-mbti-mu.vercel.app/og-mbti.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="동네 성격 검사 52문항" />
+<meta property="og:image:alt" content="성격 검사 52문항" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="성격 유형 검사 52문항 - 무료 성격 테스트" />
+<meta name="twitter:description" content="일상 속 52가지 장면으로 알아보는 무료 성격 테스트. 회원가입 없이 약 6분 만에 결과를 확인하세요." />
+<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-mbti.png" />
 
 <link rel="stylesheet" href="./styles.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "성격 검사",
+  "url": "https://love-mbti-mu.vercel.app/mbti.html",
+  "description": "일상 속 52가지 장면으로 알아보는 성격 유형 검사. 무료, 회원가입 없음.",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ko",
+  "isPartOf": { "@type": "WebSite", "name": "오늘의 검사", "url": "https://love-mbti-mu.vercel.app/" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" }
+}
+</script>
 </head>
 <body>
 <div class="app" id="app">
@@ -109,7 +128,7 @@
       <div class="result__hero">
         <p class="result__eyebrow"><b class="result__who" id="r-who"></b> 당신의 유형은</p>
         <h1 class="result__code" id="r-code">ENFP</h1>
-        <p class="result__nick" id="r-nick">동네 분위기 메이커</p>
+        <p class="result__nick" id="r-nick">가능성을 발견하는 사람</p>
         <p class="result__tagline" id="r-tagline"></p>
       </div>
 
@@ -138,6 +157,20 @@
         <div class="pair" id="r-pair"></div>
       </div>
 
+      <div class="card card--pair">
+        <h3 class="card__title">가장 안 맞는 유형</h3>
+        <div class="pair pair--worst" id="r-worst"></div>
+      </div>
+
+      <div class="card adslot">
+        <span class="adslot__label">광고</span>
+        <!-- 카카오 애드핏 > 광고 단위 관리에서 발급받은 ID로 교체 -->
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-XXXXXXXXXXXXXXXX"
+             data-ad-width="300"
+             data-ad-height="250"></ins>
+      </div>
+
       <div class="card">
         <div class="card__head">
           <h3 class="card__title">내가 고른 답</h3>
@@ -157,11 +190,13 @@
       </a>
 
       <div class="result__actions">
-        <button class="btn btn--primary btn--xl" id="btn-share">결과 복사하기</button>
-        <button class="btn btn--secondary btn--xl" id="btn-download">txt 파일로 저장</button>
+        <button class="btn btn--primary btn--xl" id="btn-share">결과 공유하기</button>
         <button class="btn btn--ghost btn--xl" id="btn-restart">다시 검사하기</button>
       </div>
-      <p class="result__foot">이 검사는 재미로 보는 성격 유형 참고 자료예요. 심리 진단이 아니에요.</p>
+      <p class="result__foot">
+        이 검사는 재미로 보는 성격 유형 참고 자료예요. 심리 진단이 아니에요.
+        <br /><a href="./privacy.html">개인정보처리방침</a>
+      </p>
     </div>
   </section>
 
@@ -175,13 +210,16 @@
   QuizEngine.mount({
     storageKey: 'dongne-mbti/v1',
     testId: 'mbti',
-    testLabel: '동네 성격 검사',
+    testLabel: '성격 검사',
     questions: QUESTIONS,
     types: TYPES,
     axes: AXES,
     shareText: (code, t) =>
-      `제 유형은 ${code} · ${t.nick}이에요.\n"${t.tagline}"\n\n동네 성격 검사 52문항`,
+      `제 유형은 ${code} · ${t.nick}이에요.\n"${t.tagline}"\n\n성격 검사 52문항`,
+    worstText: () =>
+      '생활 리듬과 판단 방식이 네 축 모두 반대라 서로를 이해하는 데 시간이 더 필요해요.',
   });
 </script>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 </html>
