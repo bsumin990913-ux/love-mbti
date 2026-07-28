@@ -16,4 +16,8 @@
     <loc>https://love-mbti-mu.vercel.app/ideal.html</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://love-mbti-mu.vercel.app/types.html</loc>
+    <priority>0.9</priority>
+  </url>
 </urlset>

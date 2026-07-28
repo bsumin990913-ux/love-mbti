@@ -214,6 +214,24 @@ kbd {
   display: grid;
   gap: var(--sp-2);
 }
+.typeslink {
+  align-self: stretch;
+  margin-top: var(--sp-6);
+  min-height: 48px;
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.typeslink:hover { border-color: var(--gray-500); }
+.typeslink:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.typeslink::after { content: '→'; color: var(--primary-text); }
 
 /* ── 이름 입력 ────────────────────────────────────── */
 .namefield { margin-top: var(--sp-8); }

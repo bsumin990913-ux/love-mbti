@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>성격·연애·이상형 유형 48가지 | 오늘의 검사</title>
+<meta id="meta-description" name="description" content="오늘의 검사에 나오는 성격 유형 16가지, 연애 유형 16가지, 이상형 유형 16가지를 한눈에 살펴보세요. 특징과 잘 맞는 유형, 가장 반대되는 유형도 확인할 수 있어요." />
+<meta name="keywords" content="성격 유형, 연애 유형, 이상형 유형, 16유형, 유형별 특징, 연애 유형 궁합, 무료 심리테스트 결과" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+
+<link id="canonical-link" rel="canonical" href="https://love-mbti-mu.vercel.app/types.html" />
+<meta name="theme-color" content="#ff6f0f" />
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="오늘의 검사" />
+<meta property="og:locale" content="ko_KR" />
+<meta id="og-url" property="og:url" content="https://love-mbti-mu.vercel.app/types.html" />
+<meta id="og-title" property="og:title" content="성격·연애·이상형 유형 48가지 | 오늘의 검사" />
+<meta id="og-description" property="og:description" content="성격·연애·이상형 검사에 나오는 48가지 유형의 특징과 관계를 살펴보세요." />
+<meta property="og:image" content="https://love-mbti-mu.vercel.app/og-home.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="오늘의 검사 유형 둘러보기" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta id="twitter-title" name="twitter:title" content="성격·연애·이상형 유형 48가지 | 오늘의 검사" />
+<meta id="twitter-description" name="twitter:description" content="성격·연애·이상형 검사에 나오는 48가지 유형의 특징과 관계를 살펴보세요." />
+<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-home.png" />
+
+<link rel="stylesheet" href="./styles.css" />
+<link rel="stylesheet" href="./types-page.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "오늘의 검사 유형 둘러보기",
+  "url": "https://love-mbti-mu.vercel.app/types.html",
+  "description": "성격 유형 16가지, 연애 유형 16가지, 이상형 유형 16가지를 모아 보는 페이지",
+  "inLanguage": "ko",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "오늘의 검사",
+    "url": "https://love-mbti-mu.vercel.app/"
+  }
+}
+</script>
+</head>
+<body class="type-catalog" data-test="mbti">
+<div class="app">
+  <main class="catalog">
+    <header class="catalog__head">
+      <a class="homelink" href="./index.html">홈으로</a>
+      <p class="catalog__eyebrow">TYPE LIBRARY</p>
+      <h1 class="catalog__title">유형 둘러보기</h1>
+      <p class="catalog__sub">
+        검사에 어떤 결과가 있는지 먼저 살펴보세요.<br />
+        각 유형의 특징과 서로 다른 지점까지 정리했어요.
+      </p>
+    </header>
+
+    <nav class="catalog-tabs" aria-label="검사 유형 선택">
+      <a class="catalog-tab" data-test-tab="mbti" href="./types.html?test=mbti">성격 유형 <span>16</span></a>
+      <a class="catalog-tab" data-test-tab="love" href="./types.html?test=love">연애 유형 <span>16</span></a>
+      <a class="catalog-tab" data-test-tab="ideal" href="./types.html?test=ideal">이상형 유형 <span>16</span></a>
+    </nav>
+
+    <section class="type-detail is-hidden" id="type-detail" aria-live="polite"></section>
+
+    <section class="catalog-list" id="catalog-list">
+      <div class="catalog-list__head">
+        <div>
+          <p class="catalog-list__eyebrow" id="catalog-label">성격 검사</p>
+          <h2 class="catalog-list__title" id="catalog-title">16가지 성격 유형</h2>
+        </div>
+        <span class="catalog-list__count">16 TYPES</span>
+      </div>
+      <div class="type-grid" id="type-grid"></div>
+    </section>
+
+    <footer class="catalog__foot">
+      유형 설명은 재미로 보는 참고 자료이며 심리 진단이 아니에요.
+      <br /><a href="./privacy.html">개인정보처리방침</a>
+    </footer>
+  </main>
+</div>
+
+<script src="./types.js"></script>
+<script src="./love-types.js"></script>
+<script src="./ideal-types.js"></script>
+<script src="./types-page.js"></script>
+</body>
+</html>

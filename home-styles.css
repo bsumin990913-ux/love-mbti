@@ -128,6 +128,25 @@
 /* 남색은 흰 배경에서 8.32:1 이라 따로 내리지 않고 그대로 쓴다 */
 .pick--ideal .pick__go { color: #364c84; }
 
+.catalog-cta {
+  margin-top: var(--sp-4);
+  min-height: 52px;
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.catalog-cta::after { content: '→'; }
+.catalog-cta:hover { border-color: var(--gray-500); }
+.catalog-cta:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
 .home__foot {
   margin: auto 0 0;
   padding-top: var(--sp-10);
