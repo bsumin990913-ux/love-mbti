@@ -139,6 +139,8 @@
   background: rgba(255, 253, 245, 0.92);
   border-radius: 0;
 }
+.theme-ideal .fold__toggle { background: rgba(255, 253, 245, 0.92); }
+.theme-ideal .sharecard__keys li { background: rgba(255, 253, 245, 0.9); }
 
 .theme-ideal .bar__track { background: var(--gray-200); }
 .theme-ideal .bar__fill {
@@ -176,12 +178,8 @@
   color: #ffffff;
 }
 
-.theme-ideal .crosslink {
-  margin: var(--sp-2) 0 0;
-  border-radius: 0;
-  background: linear-gradient(135deg, var(--lime) 0%, var(--sky) 100%);
-}
-.theme-ideal .crosslink__label { color: #414d6e; }
-.theme-ideal .crosslink__title { color: #253763; }
+/* 크로스링크 색은 목적지 검사를 따른다 — styles.css 의 .crosslink--* 참고.
+   여기서 테마 색으로 덮으면 어느 검사로 가는 링크인지 구분이 사라진다. */
+.theme-ideal .crosslink { border-radius: 0; }
 
 .theme-ideal .snackbar { background: #2b3d6b; border-radius: var(--r-md); }

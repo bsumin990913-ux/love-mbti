@@ -138,6 +138,8 @@
   background: rgba(255, 255, 255, 0.9);
   border-radius: 0;
 }
+.theme-love .fold__toggle { background: rgba(255, 255, 255, 0.9); }
+.theme-love .sharecard__keys li { background: rgba(255, 255, 255, 0.85); }
 
 /* 지표 막대는 블룸 → 핑크 그라데이션 */
 .theme-love .bar__track { background: var(--gray-200); }
@@ -176,12 +178,8 @@
   color: #ffffff;
 }
 
-.theme-love .crosslink {
-  margin: var(--sp-2) 0 0;
-  border-radius: 0;
-  background: linear-gradient(135deg, var(--lemon) 0%, var(--bloom) 100%);
-}
-.theme-love .crosslink__label { color: #6f5158; }
-.theme-love .crosslink__title { color: #a13054; }
+/* 크로스링크 색은 목적지 검사를 따른다 — styles.css 의 .crosslink--* 참고.
+   여기서 테마 색으로 덮으면 어느 검사로 가는 링크인지 구분이 사라진다. */
+.theme-love .crosslink { border-radius: 0; }
 
 .theme-love .snackbar { background: #4a2f37; border-radius: var(--r-md); }

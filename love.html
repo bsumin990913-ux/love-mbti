@@ -20,14 +20,14 @@
 <meta property="og:url" content="https://love-mbti-mu.vercel.app/love.html" />
 <meta property="og:title" content="연애 유형 검사 44문항 - 애착 유형 테스트" />
 <meta property="og:description" content="연락과 갈등, 애정 표현 성향을 알아보는 무료 연애 테스트. 회원가입 없이 약 5분 만에 4축 16유형 결과를 확인하세요." />
-<meta property="og:image" content="https://love-mbti-mu.vercel.app/og-love.png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+<meta property="og:image" content="https://love-mbti-mu.vercel.app/og-love.jpg" />
+<meta property="og:image:width" content="800" />
+<meta property="og:image:height" content="420" />
 <meta property="og:image:alt" content="연애 유형 검사 44문항" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="연애 유형 검사 44문항 - 애착 유형 테스트" />
 <meta name="twitter:description" content="44가지 일상 상황으로 알아보는 무료 연애 성향 테스트. 회원가입 없이 약 5분." />
-<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-love.png" />
+<meta name="twitter:image" content="https://love-mbti-mu.vercel.app/og-love.jpg" />
 
 <link rel="stylesheet" href="./styles.css" />
 <link rel="stylesheet" href="./love-styles.css" />
@@ -66,18 +66,16 @@
       <ul class="intro__points">
         <li><span class="dot"></span>성인 애착이론을 뼈대로 설계했어요</li>
         <li><span class="dot"></span>연인이 없어도 답할 수 있어요</li>
-        <li><span class="dot"></span>이름과 답변은 결과 정리용으로 저장돼요</li>
+        <li><span class="dot"></span>이름은 비워도 돼요. 답변은 결과 정리용으로 저장돼요</li>
       </ul>
 
       <a class="typeslink" href="./types.html?test=love">16가지 연애 유형 미리보기</a>
 
       <div class="namefield">
-        <label class="namefield__label" for="tester-name">검사하시는 분의 이름</label>
+        <label class="namefield__label" for="tester-name">이름 <span class="namefield__optional">선택</span></label>
         <input class="namefield__input" id="tester-name" type="text"
-               maxlength="20" placeholder="이름 또는 닉네임"
-               autocomplete="nickname" enterkeyhint="go"
-               aria-describedby="tester-name-error" />
-        <p class="namefield__error" id="tester-name-error" role="alert"></p>
+               maxlength="20" placeholder="넣으면 결과에 이름이 붙어요"
+               autocomplete="nickname" enterkeyhint="go" />
       </div>
 
       <div class="intro__actions">
@@ -128,44 +126,69 @@
   <!-- ── 결과 ─────────────────────────────────────── -->
   <section class="screen screen--result" id="screen-result">
     <div class="result">
-      <div class="result__hero">
+      <!-- 결과 요약. 스크롤 없이 한 화면에 들어가고, 이 블록만 캡처하면 공유가 끝난다.
+           [결과 이미지 저장]이 내보내는 PNG도 같은 구성이다 (engine.js drawCard) -->
+      <div class="sharecard result__hero">
         <p class="result__eyebrow"><b class="result__who" id="r-who"></b> 연애할 때의 당신은</p>
+        <img class="sharecard__char" id="r-char" alt=""
+             width="640" height="640" decoding="async" />
         <h1 class="result__code" id="r-code">SCEM</h1>
         <p class="result__nick" id="r-nick">매일이 기념일인 사람</p>
         <p class="result__tagline" id="r-tagline"></p>
         <p class="result__attach" id="r-attachment"></p>
+        <div class="bars" id="r-bars" data-report-title="연애 성향 지표"></div>
+        <ul class="sharecard__keys" id="r-keys"></ul>
+        <p class="sharecard__brand">오늘의 검사 · love-mbti-mu.vercel.app</p>
       </div>
 
-      <div class="card">
-        <h3 class="card__title">연애 성향 지표</h3>
-        <div class="bars" id="r-bars"></div>
+      <div class="result__actions result__actions--top">
+        <button class="btn btn--primary btn--xl" id="btn-save">결과 이미지 저장</button>
+        <button class="btn btn--ghost btn--xl" id="btn-share">링크 공유하기</button>
       </div>
 
-      <div class="card">
-        <h3 class="card__title">이런 연애를 해요</h3>
-        <p class="card__body" id="r-desc"></p>
-      </div>
+      <details class="fold">
+        <summary class="fold__toggle">자세한 결과 보기</summary>
 
-      <div class="card">
-        <h3 class="card__title">이런 장면에서 드러나요</h3>
-        <ul class="traits" id="r-traits"></ul>
-      </div>
+        <div class="card">
+          <h3 class="card__title">이런 연애를 해요</h3>
+          <p class="card__body" id="r-desc"></p>
+        </div>
 
-      <div class="card">
-        <h3 class="card__title">이런 점은 조심해요</h3>
-        <p class="card__body" id="r-watch"></p>
-      </div>
+        <div class="card">
+          <h3 class="card__title">이런 장면에서 드러나요</h3>
+          <ul class="traits" id="r-traits"></ul>
+        </div>
 
-      <div class="card card--pair">
-        <h3 class="card__title">잘 맞는 유형</h3>
-        <div class="pair" id="r-pair"></div>
-      </div>
+        <div class="card">
+          <h3 class="card__title">이런 점은 조심해요</h3>
+          <p class="card__body" id="r-watch"></p>
+        </div>
 
-      <div class="card card--pair">
-        <h3 class="card__title">가장 안 맞는 유형</h3>
-        <div class="pair pair--worst" id="r-worst"></div>
-      </div>
+        <div class="card card--pair">
+          <h3 class="card__title">잘 맞는 유형</h3>
+          <div class="pair" id="r-pair"></div>
+        </div>
 
+        <div class="card card--pair">
+          <h3 class="card__title">가장 안 맞는 유형</h3>
+          <div class="pair pair--worst" id="r-worst"></div>
+        </div>
+
+        <div class="card">
+          <div class="card__head">
+            <h3 class="card__title">내가 고른 답</h3>
+            <button class="btn btn--chip" type="button" id="btn-copy-answers">전체 복사</button>
+          </div>
+          <details class="review">
+            <summary class="review__toggle">
+              <span><span id="r-review-count">44</span>문항 모두 보기</span>
+            </summary>
+            <ol class="review__list" id="r-answers"></ol>
+          </details>
+        </div>
+      </details>
+
+      <!-- 광고는 접힘 밖에 둔다. details 안에 넣으면 펼치기 전까지 노출이 안 잡힌다 -->
       <div class="card adslot">
         <span class="adslot__label">광고</span>
         <!-- 카카오 애드핏 > 광고 단위 관리에서 발급받은 ID로 교체 -->
@@ -175,37 +198,24 @@
              data-ad-height="250"></ins>
       </div>
 
-      <div class="card">
-        <div class="card__head">
-          <h3 class="card__title">내가 고른 답</h3>
-          <button class="btn btn--chip" type="button" id="btn-copy-answers">전체 복사</button>
-        </div>
-        <details class="review">
-          <summary class="review__toggle">
-            <span><span id="r-review-count">44</span>문항 모두 보기</span>
-          </summary>
-          <ol class="review__list" id="r-answers"></ol>
-        </details>
-      </div>
-
-      <a class="crosslink" href="./ideal.html">
+      <a class="crosslink crosslink--ideal" href="./ideal.html">
         <span class="crosslink__label">그럼 난 어떤 사람이 좋을까</span>
         <span class="crosslink__title">이상형 검사 20문항 하러 가기</span>
       </a>
 
-      <a class="crosslink" href="./mbti.html">
+      <a class="crosslink crosslink--mbti" href="./mbti.html">
         <span class="crosslink__label">평소의 나도 궁금하다면</span>
-        <span class="crosslink__title">성격 검사 52문항 하러 가기</span>
+        <span class="crosslink__title">성격 검사 36문항 하러 가기</span>
       </a>
 
-      <a class="crosslink" href="./types.html?test=love">
+      <a class="crosslink crosslink--love" href="./types.html?test=love">
         <span class="crosslink__label">다른 사람의 연애 결과도 궁금하다면</span>
         <span class="crosslink__title">16가지 연애 유형 둘러보기</span>
       </a>
 
       <div class="result__actions">
-        <button class="btn btn--primary btn--xl" id="btn-share">결과 공유하기</button>
         <button class="btn btn--ghost btn--xl" id="btn-restart">다시 검사하기</button>
+        <a class="btn btn--ghost btn--xl" href="./index.html">홈으로 돌아가기</a>
       </div>
       <p class="result__foot">
         애착이론·사랑의 색깔 이론을 참고해 만든 재미용 검사예요.
@@ -227,6 +237,8 @@
     testId: 'love',
     testLabel: '연애 유형 검사',
     questions: LOVE_QUESTIONS,
+    /* 아직 네 유형만 그려져 있다. 없는 유형은 이미지 자리가 통째로 빠진다 */
+    charSrc: (code) => `./char/web/love/${code.toLowerCase()}.webp`,
     types: LOVE_TYPES,
     axes: LOVE_AXES,
     shareText: (code, t) =>

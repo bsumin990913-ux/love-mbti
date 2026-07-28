@@ -99,6 +99,13 @@ body { min-height: 100dvh; }
               transform var(--motion-fast) var(--ease-standard);
 }
 .btn--xl { width: 100%; height: 52px; }
+/* 링크를 버튼으로 쓰는 자리 (홈으로 돌아가기 등) */
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
 .btn--primary { background: var(--primary); color: var(--on-primary); }
 .btn--primary:hover { background: var(--primary-hover); }
 .btn--primary:active { background: var(--primary-pressed); transform: scale(0.98); }
@@ -263,6 +270,16 @@ kbd {
   outline-offset: -1px;
   border-color: transparent;
 }
+/* 이름은 선택 입력이다 — 라벨 옆에 그렇다고 적어둬야 비워두고 지나간다 */
+.namefield__optional {
+  margin-left: var(--sp-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* 검사 화면에는 이제 막을 입력이 없다. 관리자 로그인(admin.html)이
+   같은 입력 스타일을 쓰고 있어서 오류 표시는 남겨둔다 */
 .namefield__input.is-invalid { border-color: var(--error); }
 .namefield__input.is-invalid:focus { outline-color: var(--error); }
 .namefield__error {
@@ -409,9 +426,17 @@ kbd {
    결과
    ───────────────────────────────────────────────────── */
 .result { padding: 0 0 var(--sp-12); background: var(--background); }
+
+/* ── 결과 요약 카드 ────────────────────────────────
+   결과 화면의 첫 장이자 유일하게 펼쳐져 있는 블록. 유형·한 줄·지표·키워드를
+   한 화면에 모아두는 이유는 두 가지다.
+     1) 스크롤 없이 결과가 다 보인다
+     2) 이 블록 하나만 스크린샷 찍으면 공유가 끝난다
+   [결과 이미지 저장]이 내보내는 1080×1920 PNG도 같은 구성이다
+   (engine.js drawCard). 여기 항목을 바꾸면 저쪽도 같이 바꿔야 한다. */
 .result__hero {
   background: var(--canvas);
-  padding: var(--sp-16) var(--sp-5) var(--sp-12);
+  padding: var(--sp-6) var(--sp-5);
   text-align: center;
 }
 .result__eyebrow {
@@ -422,26 +447,105 @@ kbd {
 }
 .result__code {
   margin: 0;
-  font-size: 48px;
+  font-size: 44px;
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0.02em;
   color: var(--primary-text);
 }
 .result__nick {
-  margin: var(--sp-3) 0 0;
-  font-size: 24px;
+  margin: var(--sp-2) 0 0;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: -0.02em;
 }
 .result__tagline {
   margin: var(--sp-2) 0 0;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   letter-spacing: -0.02em;
   color: var(--text-secondary);
 }
+
+/* 유형 캐릭터. 배경이 있는 사각 이미지라 모서리를 둥글게 깎아 카드처럼 앉힌다.
+   src 가 아직 없거나(로딩 전) 그 유형 그림이 없으면 자리를 차지하지 않는다 */
+.sharecard__char {
+  display: block;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto var(--sp-3);
+  border-radius: 20px;
+  object-fit: cover;
+}
+.sharecard__char:not([src]) { display: none; }
+
+/* 요약 카드 안의 지표는 축 설명과 간격을 줄인 압축판을 쓴다.
+   풀 설명은 아래 [자세한 결과 보기]에 그대로 남아 있다 */
+.sharecard .bars { margin-top: var(--sp-6); gap: var(--sp-4); text-align: left; }
+/* 막대 위(8px)보다 아래(칸 사이 16px)를 넓게 둔다. 같으면 막대가 자기 이름이
+   아니라 아래 축 이름에 붙어 보인다 — 저장 이미지도 같은 비율이다 */
+.sharecard .bar__head { margin-bottom: var(--sp-2); font-size: 13px; }
+.sharecard .bar__side small { display: none; }
+.sharecard .bar__track { height: 6px; }
+
+.sharecard__keys {
+  list-style: none;
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+.sharecard__keys li {
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-full);
+  background: var(--brand-tint);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary-text);
+}
+.sharecard__brand {
+  margin: var(--sp-5) 0 0;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--gray-500);
+}
+
+/* 저장·공유는 요약 카드 바로 아래. 첫 화면 안에 있어야 의미가 있다 */
+.result__actions--top { padding-top: var(--sp-4); }
+
+/* ── 자세한 결과 펼침 ──────────────────────────────
+   설명·특징·궁합 카드는 읽고 싶은 사람만 연다. 기본은 접힘이다 */
+.fold { margin: var(--sp-2) 0 0; }
+.fold__toggle {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+  background: var(--canvas);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.fold__toggle::-webkit-details-marker { display: none; }
+.fold__toggle::after {
+  content: '⌄';
+  font-size: 16px;
+  line-height: 1;
+  transform: translateY(-2px);
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+.fold[open] .fold__toggle { color: var(--foreground); }
+.fold[open] .fold__toggle::after { transform: rotate(180deg) translateY(-1px); }
+.fold__toggle:hover { color: var(--foreground); }
+.fold__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 
 .card {
   background: var(--canvas);
@@ -501,14 +605,16 @@ kbd {
   transition: width var(--motion-slow) var(--ease-standard);
 }
 .bar__fill--right { margin-left: auto; }
-.bar__pct {
-  margin-top: var(--sp-2);
+/* 백분율은 축 이름과 같은 줄에 붙인다. 막대 아래 따로 한 줄을 두면
+   막대 하나가 18px 씩 커져서, 요약 카드가 한 화면을 넘긴다 */
+.bar__pct { font-style: normal; font-variant-numeric: tabular-nums; }
+.bar__tie {
+  margin: var(--sp-1) 0 0;
   font-size: 12px;
+  text-align: center;
+  letter-spacing: -0.02em;
   color: var(--text-secondary);
-  display: flex;
-  justify-content: space-between;
 }
-.bar__tie { color: var(--text-secondary); }
 
 .traits { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
 .traits li {
@@ -663,6 +769,12 @@ kbd {
 }
 
 /* 다른 검사로 넘어가는 링크 */
+/* ── 다른 검사로 넘어가는 링크 ─────────────────────
+   색은 "지금 보고 있는 페이지"가 아니라 "링크가 가는 곳"을 따른다.
+   현재 테마 색을 쓰면 이상형 결과에서 연애 검사 링크와 이상형 유형 링크가
+   똑같이 보여서, 어디로 가는 건지 구분이 안 된다.
+   그래서 아래 세 변형은 var() 대신 각 검사의 값을 직접 적는다 — 테마를 타면
+   목적지 색이 아니게 되기 때문이다. */
 .crosslink {
   display: block;
   margin: var(--sp-2) 0 0;
@@ -676,8 +788,6 @@ kbd {
   color: var(--text-secondary);
   letter-spacing: -0.02em;
 }
-/* §12 원칙 1 — 주 CTA와 같은 화면에 주황이 둘이 될 수 없어서
-   링크임은 화살표로 알리고 색은 중립으로 둔다 */
 .crosslink__title {
   display: block;
   margin-top: var(--sp-1);
@@ -687,6 +797,22 @@ kbd {
   letter-spacing: -0.02em;
 }
 .crosslink__title::after { content: ' →'; }
+
+/* 성격 — SEED 주황. 흰 글씨도 주황 글씨도 안 얹히는 색이라 면은 연하게 깔고
+   글자는 어둡게 내린 값(#a34205, 그라데이션 진한 쪽에서 4.76:1)을 쓴다 */
+.crosslink--mbti { background: linear-gradient(135deg, #fff0e2 0%, #ffd9bd 100%); }
+.crosslink--mbti .crosslink__label { color: #6b4a33; }
+.crosslink--mbti .crosslink__title { color: #a34205; }
+
+/* 연애 — Lemon × Bloom */
+.crosslink--love { background: linear-gradient(135deg, #faffc7 0%, #ffd1d5 100%); }
+.crosslink--love .crosslink__label { color: #6f5158; }
+.crosslink--love .crosslink__title { color: #a13054; }
+
+/* 이상형 — Lime × Sky */
+.crosslink--ideal { background: linear-gradient(135deg, #e7f1a8 0%, #95b1ee 100%); }
+.crosslink--ideal .crosslink__label { color: #414d6e; }
+.crosslink--ideal .crosslink__title { color: #253763; }
 
 .result__actions {
   padding: var(--sp-8) var(--sp-5) 0;
