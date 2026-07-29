@@ -347,9 +347,15 @@ kbd {
   min-height: calc(100dvh - 59px);
 }
 .quiz__scene {
-  margin: 0 0 var(--sp-3);
-  font-size: 13px;
-  font-weight: 700;
+  align-self: flex-start;
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid currentColor;
+  border-radius: var(--r-full);
+  background: var(--brand-tint);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
   letter-spacing: -0.02em;
   color: var(--primary-text);
 }
