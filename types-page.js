@@ -15,6 +15,7 @@
       worstText: '생활 리듬과 판단 방식이 네 축 모두 반대라 서로를 이해하는 데 시간이 더 필요해요.',
       testUrl: './mbti.html',
       testCta: '성격 검사 시작하기',
+      charSrc: (code) => `./char/web/mbti/${code.toLowerCase()}.webp`,
       types: TYPES,
       axes: AXES,
     },
@@ -27,6 +28,7 @@
       worstText: '관계의 거리와 표현 속도, 갈등을 다루는 방식이 모두 반대라 기대를 자주 확인해야 해요.',
       testUrl: './love.html',
       testCta: '연애 유형 검사 시작하기',
+      charSrc: (code) => `./char/web/love/${code.toLowerCase()}.webp`,
       types: LOVE_TYPES,
       axes: LOVE_AXES,
     },
@@ -39,6 +41,7 @@
       worstText: '끌리는 온도와 관계 범위, 표현 방식과 주도권 취향이 네 축 모두 반대인 유형이에요.',
       testUrl: './ideal.html',
       testCta: '이상형 검사 시작하기',
+      charSrc: (code) => `./char/web/ideal/${code}.webp`,
       types: IDEAL_TYPES,
       axes: IDEAL_AXES,
     },
@@ -77,12 +80,18 @@
       .map(([code, type]) => `
         <a class="type-card" href="${typeUrl(code)}"
            aria-label="${esc(code)} ${esc(type.nick)} 자세히 보기">
+          <img class="type-card__char" src="${catalog.charSrc(code)}" alt=""
+               width="640" height="640" loading="lazy" decoding="async" />
           <span class="type-card__code">${esc(code)}</span>
           <strong class="type-card__nick">${esc(type.nick)}</strong>
           <p class="type-card__tagline">${esc(type.tagline)}</p>
           <span class="type-card__more">자세히 보기</span>
         </a>`)
       .join('');
+
+    document.querySelectorAll('.type-card__char').forEach((image) => {
+      image.addEventListener('error', () => image.remove());
+    });
   }
 
   function axisMarkup(code) {

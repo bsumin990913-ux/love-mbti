@@ -118,6 +118,15 @@
 }
 .type-card:hover { border-color: var(--catalog-accent); }
 .type-card:active { transform: scale(0.98); }
+.type-card__char {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  margin-bottom: var(--sp-4);
+  border-radius: var(--r-md);
+  object-fit: cover;
+}
 .type-card__code {
   color: var(--catalog-accent-text);
   font-size: 13px;

@@ -130,6 +130,8 @@
            [결과 이미지 저장]이 내보내는 PNG도 같은 구성이다 (engine.js drawCard) -->
       <div class="sharecard result__hero">
         <p class="result__eyebrow"><b class="result__who" id="r-who"></b> 당신이 끌리는 사람은</p>
+        <img class="sharecard__char" id="r-char" alt=""
+             width="640" height="640" decoding="async" />
         <h1 class="result__code" id="r-code">FMDL</h1>
         <p class="result__nick" id="r-nick">나한테만 뜨거운 사람</p>
         <p class="result__tagline" id="r-tagline"></p>
@@ -230,6 +232,7 @@
     testId: 'ideal',
     testLabel: '이상형 검사',
     questions: IDEAL_QUESTIONS,
+    charSrc: (code) => `./char/web/ideal/${code}.webp`,
     types: IDEAL_TYPES,
     axes: IDEAL_AXES,
     shareText: (code, t) =>
