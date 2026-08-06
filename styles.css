@@ -836,6 +836,84 @@ kbd {
 }
 .result__foot a { color: inherit; }
 
+/* ── 썸메이트 배너 ─────────────────────────────────
+   결과 화면·홈·유형 목록, 다섯 자리 전부 같은 모양으로 통일한다.
+   왼쪽 두 줄(안내 + 굵은 한 줄, "썸메이트"만 강조색) · 오른쪽 아이콘 ·
+   아래 전체폭 버튼. 카드는 사이트의 다른 흰 카드(.card)와 같은 배경이라
+   색으로 면을 칠하지 않고, 버튼과 강조 글자 한 곳에만 브랜드색을 쓴다.
+
+   강조색은 썸메이트 브랜드 원색 #FD1569 그대로 쓴다.
+   버튼의 흰 글씨 대비는 3.8:1로 AA 본문 기준(4.5:1)에는 못 미치지만,
+   브랜드 일관성을 우선하는 쪽으로 정했다 — 대신 글자를 굵고 크게 키워
+   가독성을 최대한 보완했다. */
+.somemate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin: var(--sp-6) 0 0;
+  padding: var(--sp-5);
+  background: var(--canvas);
+  border-radius: 22px;
+  box-shadow: 0 2px 16px rgba(17, 17, 17, 0.07);
+  text-decoration: none;
+}
+.somemate--home { margin-top: var(--sp-8); }
+
+.somemate__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.somemate__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+.somemate__label {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  letter-spacing: -0.02em;
+}
+.somemate__title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+.somemate__title b {
+  color: #fd1569;
+  font-weight: 800;
+}
+.somemate__icon {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(253, 21, 105, 0.28);
+}
+.somemate__go {
+  display: block;
+  width: 100%;
+  padding: 14px var(--sp-5);
+  background: #fd1569;
+  border-radius: var(--r-full);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+.somemate__go::after { content: ' →'; }
+
+@media (hover: hover) {
+  .somemate:hover .somemate__go { background: #e01060; }
+}
+.somemate:active { opacity: 0.9; }
+
 /* ── 광고 슬롯 ─────────────────────────────────────
    카카오 애드핏. .card 위에 얹어서 각 테마의 카드 배경·모서리를 그대로 따라간다.
    data-ad-unit 은 애드핏 콘솔에서 발급받은 실제 광고 단위 ID로 교체해야 노출된다.

@@ -146,6 +146,21 @@
         <button class="btn btn--ghost btn--xl" id="btn-share">링크 공유하기</button>
       </div>
 
+      <!-- 소개팅 신청 — 지금까지 끝낸 검사의 유형 코드를 그대로 들고 넘어간다.
+           주소는 partner.js 가 누르는 순간에 만든다 (방금 끝낸 결과까지 실린다).
+           광고보다 위에 둔다 — 신청 한 건이 광고 노출보다 값이 크다 -->
+      <a class="somemate" href="#" data-partner-cta>
+        <span class="somemate__top">
+          <span class="somemate__body">
+            <span class="somemate__label">결과가 그럴듯했다면</span>
+            <span class="somemate__title"><b>썸메이트</b>에 신청해보세요</span>
+          </span>
+          <img class="somemate__icon" src="./somemate-icon.png" width="56" height="56" loading="lazy"
+               alt="" />
+        </span>
+        <span class="somemate__go" data-partner-go>신청하러 가기</span>
+      </a>
+
       <details class="fold">
         <summary class="fold__toggle">자세한 결과 보기</summary>
 
@@ -247,6 +262,8 @@
       '관계의 거리와 표현 속도, 갈등을 다루는 방식이 모두 반대라 기대를 자주 확인해야 해요.',
   });
 </script>
+<script src="./partner.js" defer></script>
+<script src="./ads.js" defer></script>
 <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
 </body>
 </html>
