@@ -21,8 +21,11 @@
     mbti: typeof QUESTIONS !== 'undefined' ? QUESTIONS : [],
     love: typeof LOVE_QUESTIONS !== 'undefined' ? LOVE_QUESTIONS : [],
     ideal: typeof IDEAL_QUESTIONS !== 'undefined' ? IDEAL_QUESTIONS : [],
+    sai: typeof SAI_QUESTIONS !== 'undefined' ? SAI_QUESTIONS : [],
   };
-  const TEST_LABELS = { mbti: '성격 검사', love: '연애 유형 검사', ideal: '이상형 검사' };
+  const TEST_LABELS = {
+    mbti: '성격 검사', love: '연애 유형 검사', ideal: '이상형 검사', sai: '관계 반응',
+  };
 
   let adminKey = '';
   let records = [];
@@ -162,7 +165,8 @@
       return acc;
     }, {});
     $('list-meta').textContent = records.length
-      ? `전체 ${records.length}명 · 성격 ${counts.mbti || 0} · 연애 ${counts.love || 0} · 이상형 ${counts.ideal || 0}`
+      ? `전체 ${records.length}명 · 성격 ${counts.mbti || 0} · 연애 ${counts.love || 0}`
+        + ` · 이상형 ${counts.ideal || 0} · 관계 반응 ${counts.sai || 0}`
       : '아직 기록이 없어요';
 
     $('empty').classList.toggle('is-hidden', rows.length > 0);
@@ -188,13 +192,77 @@
 
   /* ── 상세 ────────────────────────────────────── */
 
-  /** 저장된 극 배열을 원본 문항과 맞춰 하나씩 되살린다 */
+  /* ── 답 되살리기 ──────────────────────────────
+     성격·연애·이상형은 답이 극(pole) 문자 배열이고, 관계 반응(sai)은
+     문항 인덱스를 키로 하는 객체다. 저장 모양이 다르니 아래 셋으로 감싼다 */
+
+  const isSai = (record) => record.test === 'sai';
+
+  /** 답 개수. 배열이면 길이, 객체면 키 수 */
+  function answerCount(record) {
+    const answers = record.answers;
+    if (Array.isArray(answers)) return answers.length;
+    if (answers && typeof answers === 'object') return Object.keys(answers).length;
+    return 0;
+  }
+
+  /** 관계 반응 문항 하나의 답을 사람이 읽을 문장으로 */
+  function saiAnswerText(q, value) {
+    if (!q) return String(value);
+
+    /* 순서 정렬 문항은 선택지를 스스로 갖고 있지 않다. 바로 앞 복수 선택
+       문항에서 고른 것을 정렬하는 문항이라, 이름표도 거기서 가져온다 */
+    const source = q.type === 'rank' ? QUESTION_SETS.sai[0] || q : q;
+
+    const label = (id) => {
+      const found = (source.options || []).find((o) => o[0] === id)
+        || (source.items || []).find((o) => o[0] === id);
+      return found ? found[1] : String(id);
+    };
+
+    if (Array.isArray(value)) {
+      // 순서 정렬은 순서 자체가 답이라 화살표로, 복수 선택은 나열로 잇는다
+      const glue = q.type === 'rank' || q.type === 'loveRank' ? ' → ' : ' · ';
+      return value.map(label).join(glue);
+    }
+    if (typeof value === 'number') {
+      const side = value < 30 ? 'A쪽' : value > 70 ? 'B쪽' : '양쪽 비슷';
+      return `${value} · ${side}`;
+    }
+    if (q.type === 'reply') return `“${value}”`;
+    return label(value);
+  }
+
+  function saiRows(record) {
+    const questions = QUESTION_SETS.sai;
+    const answers = record.answers || {};
+
+    return Object.keys(answers)
+      .map(Number)
+      .filter((i) => Number.isInteger(i))
+      .sort((a, b) => a - b)
+      .map((i) => {
+        const q = questions[i];
+        return {
+          no: i + 1,
+          scene: q ? q.context : '문항 정보 없음',
+          q: q ? q.title : `${i + 1}번 문항이 지금 문항 목록에 없어요`,
+          pole: '',
+          picked: saiAnswerText(q, answers[i]),
+          skipped: '',
+        };
+      });
+  }
+
+  /** 저장된 답을 원본 문항과 맞춰 하나씩 되살린다 */
   function answerRows(record) {
+    if (isSai(record)) return saiRows(record);
+
     const questions = QUESTION_SETS[record.test] || [];
     const answers = record.answers || [];
 
     // 문항을 고쳐서 개수가 달라졌으면 본문을 붙일 수 없다
-    if (questions.length !== answers.length) return null;
+    if (!Array.isArray(answers) || questions.length !== answers.length) return null;
 
     return answers.map((pole, i) => {
       const q = questions[i];
@@ -208,11 +276,20 @@
     current = record;
     const rows = answerRows(record);
 
-    const tally = (record.answers || []).reduce((acc, p) => {
-      acc[p] = (acc[p] || 0) + 1;
-      return acc;
-    }, {});
-    const tallyText = Object.keys(tally).sort().map((p) => `${p} ${tally[p]}`).join(' · ');
+    /* 극 분포는 축이 있는 검사에서만 뜻이 있다. 관계 반응은 대신 불안·회피 점수를 보여준다 */
+    let tallyLabel = '선택 분포';
+    let tallyText;
+    if (isSai(record)) {
+      const scores = record.scores;
+      tallyLabel = '애착 점수';
+      tallyText = scores ? `불안 ${scores.anxiety} · 회피 ${scores.avoidance}` : '기록 없음';
+    } else {
+      const tally = (record.answers || []).reduce((acc, p) => {
+        acc[p] = (acc[p] || 0) + 1;
+        return acc;
+      }, {});
+      tallyText = Object.keys(tally).sort().map((p) => `${p} ${tally[p]}`).join(' · ');
+    }
 
     const body = rows
       ? rows.map((r) => `
@@ -220,13 +297,13 @@
             <p class="review__scene"><span class="review__no">${r.no}</span>${esc(r.scene)}</p>
             <p class="review__q">${esc(r.q)}</p>
             <p class="review__pick">
-              <span class="review__pole">${esc(r.pole)}</span>
+              ${r.pole ? `<span class="review__pole">${esc(r.pole)}</span>` : ''}
               <span>${esc(r.picked)}</span>
             </p>
-            <p class="review__skip">${esc(r.skipped)}</p>
+            ${r.skipped ? `<p class="review__skip">${esc(r.skipped)}</p>` : ''}
           </li>`).join('')
       : `<li class="review__item"><p class="review__q">
-           저장된 응답 ${esc((record.answers || []).length)}개가 지금 문항 수와 달라
+           저장된 응답 ${esc(answerCount(record))}개가 지금 문항 수와 달라
            문항 본문을 붙일 수 없어요. 고른 값: ${esc((record.answers || []).join(' '))}
          </p></li>`;
 
@@ -237,7 +314,7 @@
         <dl class="detail__facts">
           <div><dt>유형</dt><dd>${esc(record.code)} · ${esc(record.nick)}</dd></div>
           <div><dt>검사일</dt><dd>${esc(formatDate(record.createdAt))}</dd></div>
-          <div><dt>선택 분포</dt><dd>${esc(tallyText)}</dd></div>
+          <div><dt>${esc(tallyLabel)}</dt><dd>${esc(tallyText)}</dd></div>
         </dl>
         <div class="detail__actions">
           <button class="btn btn--chip" type="button" id="btn-copy-one">답변 복사</button>
@@ -246,7 +323,7 @@
       </div>
 
       <div class="card">
-        <h3 class="card__title">고른 답 ${esc((record.answers || []).length)}개</h3>
+        <h3 class="card__title">고른 답 ${esc(answerCount(record))}개</h3>
         <ol class="review__list">${body}</ol>
       </div>`;
 
@@ -272,8 +349,14 @@
       '',
       '[고른 답]',
     ];
+    if (isSai(record) && record.scores) {
+      out.splice(4, 0, `애착 점수: 불안 ${record.scores.anxiety} · 회피 ${record.scores.avoidance}`);
+    }
     if (rows) {
-      rows.forEach((r) => out.push(`${r.no}. ${r.scene}\n   ${r.q}\n   → ${r.picked} (${r.pole})`, ''));
+      rows.forEach((r) => {
+        const pole = r.pole ? ` (${r.pole})` : '';
+        out.push(`${r.no}. ${r.scene}\n   ${r.q}\n   → ${r.picked}${pole}`, '');
+      });
     } else {
       out.push((record.answers || []).join(' '));
     }
@@ -287,23 +370,47 @@
     return `"${text.replace(/"/g, '""')}"`;
   }
 
+  /**
+   * 문항 열에 들어갈 값. 열 번호는 두 검사 모두 문항 인덱스에 맞춘다.
+   * 관계 반응은 건너뛴 문항 자리가 비므로 그 칸은 빈 문자열로 둔다.
+   */
+  function answerCells(record) {
+    if (!isSai(record)) return Array.isArray(record.answers) ? record.answers : [];
+
+    const answers = record.answers || {};
+    const indexes = Object.keys(answers).map(Number).filter(Number.isInteger);
+    if (!indexes.length) return [];
+
+    const cells = new Array(Math.max(...indexes) + 1).fill('');
+    indexes.forEach((i) => {
+      cells[i] = saiAnswerText(QUESTION_SETS.sai[i], answers[i]);
+    });
+    return cells;
+  }
+
   function buildCsv() {
-    const questionMax = Math.max(
-      ...visibleRecords().map((r) => (r.answers || []).length), 0,
-    );
+    const rows = visibleRecords();
+    const questionMax = Math.max(...rows.map((r) => answerCells(r).length), 0);
+
+    /* 애착 점수 열은 관계 반응 기록이 보일 때만 붙인다.
+       다른 검사만 내보낼 때 빈 열이 늘어나지 않게 */
+    const withScores = rows.some(isSai);
+
     const header = ['검사', '이름', '유형', '별명', '검사일'];
+    if (withScores) header.push('불안', '회피');
     for (let i = 1; i <= questionMax; i += 1) header.push(`Q${i}`);
 
     const lines = [header.map(csvCell).join(',')];
-    visibleRecords().forEach((r) => {
+    rows.forEach((r) => {
       const cells = [
         TEST_LABELS[r.test] || r.test,
         r.name,
         r.code,
         r.nick,
         formatDate(r.createdAt),
-        ...(r.answers || []),
       ];
+      if (withScores) cells.push(r.scores ? r.scores.anxiety : '', r.scores ? r.scores.avoidance : '');
+      cells.push(...answerCells(r));
       lines.push(cells.map(csvCell).join(','));
     });
     return lines.join('\r\n');
