@@ -110,6 +110,101 @@ function render(){
 }
 function empathyText(v){if(v<30)return 'A의 마음이 더 먼저 이해돼요';if(v>70)return 'B의 마음이 더 먼저 이해돼요';return '두 사람 모두 비슷하게 이해돼요'}
 
+/**
+ * 문항별 선택지 가중치. 키는 문항 인덱스(0부터), 값은 선택지 id 별 점수.
+ *
+ * 예전에는 한 문항에서 지목된 선택지 하나만 점수를 올리고 나머지 셋은 전부 0 이었다.
+ * 그래서 4지선다인데 실제로는 2지선다처럼 굴러가는 문항이 12개였다 — 고민해서 고른
+ * 답이 결과에 남지 않았다.
+ *
+ * 이제 선택지마다 값을 따로 준다. 음수는 그 경향을 낮춘다. 안정적인 선택이 점수를
+ * 깎게 두면 점수가 한쪽으로만 쌓이지 않고 사람 사이의 간격이 벌어진다.
+ */
+const ANXIETY_WEIGHTS={
+  5:{repair:6,reverse:8,hold:-2},
+  7:{reason:6,withdraw:7},
+  12:{worry:10,checkLater:4,stay:2},
+  13:{follow:9},
+  15:{remain:6,details:5},
+  19:{ask:8,ruminate:8},
+  20:{monitor:9,rule:5,context:2,trust:-3},
+  21:{mirror:8,observe:3,share:-2},
+  29:{question:3},
+  30:{adapt:5,divide:-2},
+  31:{connect:3},
+  32:{worry:7,affirm:-1,savor:-2},
+  33:{sorry:9},
+  34:{read:8,glad:-2}
+};
+const AVOIDANCE_WEIGHTS={
+  2:{delay:5},
+  5:{space:10,hold:3},
+  13:{close:9},
+  14:{distance:10,avoidTalk:6},
+  15:{accept:4},
+  24:{avoid:8},
+  25:{hold:5,other:4,askSmall:-2},
+  28:{minimize:8,time:4,write:2},
+  29:{accept:5,question:4},
+  30:{protect:5},
+  31:{rest:3,activity:2},
+  33:{deflect:9,explain:5},
+  34:{later:8}
+};
+
+/** 가중치 표를 훑어 합을 낸다. 고르지 않은 문항과 표에 없는 선택지는 0 */
+function weighAnswers(table){
+  let sum=0;
+  for(const index of Object.keys(table)){
+    const answer=state.answers[index];
+    if(typeof answer==='string') sum+=table[index][answer]||0;
+  }
+  return sum;
+}
+
+/**
+ * 네 축의 글자를 정한다.
+ *
+ * 예전에는 축마다 문항 하나가 글자를 혼자 정했다. 화면에는 다른 문항 두 개도
+ * 근거로 함께 인용됐지만 그것들은 신뢰도 숫자만 바꿀 뿐 글자를 바꾸지 못했다 —
+ * 종합해서 판단한 것처럼 보이기만 한 셈이다.
+ *
+ * 이제 인용하는 문항이 실제로 투표한다. 주 문항 2점, 보조 문항은 최대 1.5점이라
+ * 보조 둘이 함께 반대하면 글자가 뒤집힌다. 합이 0이면 주 문항을 따른다.
+ *
+ * 각 축에서 앞 글자(E·N·T·J)가 양수 방향이다.
+ */
+function resolveAxes(a){
+  const pick=(value,table)=>table[value]||0;
+  const specs=[
+    {pair:'E / I',name:'에너지를 얻고 생각을 정리하는 방향',poles:['E','I'],
+     primary:['out','one'].includes(a.energy)?2:-2,
+     secondary:pick(a.decision,{consult:1.5,criteria:-1.5,more:-0.5,intuition:-0.5})
+              +pick(a.publicMisunderstanding,{clarify:1.5,humor:1,private:-1.5,wait:-1})},
+    {pair:'S / N',name:'정보를 받아들이는 방식',poles:['N','S'],
+     primary:['system','try'].includes(a.information)?2:-2,
+     secondary:pick(a.feedback,{ruminate:1.5,detach:0,ask:-1,extract:-1.5})
+              +pick(a.decision,{intuition:1.5,consult:0,more:-0.5,criteria:-1.5})},
+    {pair:'T / F',name:'판단의 중심에 두는 것',poles:['T','F'],
+     primary:['solve','askNeed'].includes(a.judgment)?2:-2,
+     secondary:pick(a.loveMisunderstanding,{defend:1.5,clarify:0.5,wait:0,apologize:-1.5})
+              +pick(a.publicMisunderstanding,{clarify:1,wait:0,private:-1,humor:-1})},
+    {pair:'J / P',name:'생활을 조직하고 대응하는 방식',poles:['J','P'],
+     primary:['plan','anchor'].includes(a.planning)?2:-2,
+     secondary:pick(a.busyContact,{notice:1.5,routine:1,focus:-0.5,natural:-1.5})
+              +pick(a.future,{practical:1.5,honest:0,avoid:-0.5,join:-1})}
+  ];
+  return specs.map(spec=>{
+    const sum=spec.primary+spec.secondary;
+    const positive=sum===0?spec.primary>0:sum>0;
+    return {...spec,sum,
+      result:positive?spec.poles[0]:spec.poles[1],
+      /* 근거가 한쪽으로 모일수록 올라간다. 최대 5점이면 80% */
+      confidence:Math.round(50+Math.min(5,Math.abs(sum))*6),
+      agrees:(spec.primary>0)===(spec.secondary>0)||spec.secondary===0};
+  });
+}
+
 function enrichResult(){
   const multi=state.answers[0]||[];
   const first=(state.answers[1]||[])[0];
@@ -125,31 +220,35 @@ function enrichResult(){
   const future=state.answers[24],support=state.answers[25],decision=state.answers[26],busyContact=state.answers[27];
   const vulnerability=state.answers[28],repeatConflict=state.answers[29],independence=state.answers[30],recovery=state.answers[31];
   const goodNews=state.answers[32],apology=state.answers[33],meetFriends=state.answers[34];
-  let anxiety=24+(multi.includes('review')?12:0)+(multi.includes('check')?7:0)+(first==='review'?6:0)+(loverChoice==='reason'?6:0)+(loverChoice==='withdraw'?7:0)+(intimacy==='worry'?10:0)+(conflict==='follow'?9:0)+(repair==='remain'?6:0)+(loveFeedback==='ask'||loveFeedback==='ruminate'?8:0)+(jealousy==='monitor'?9:0)+(affection==='mirror'?8:0)+(goodNews==='worry'?7:0)+(apology==='sorry'?9:0)+(meetFriends==='read'?8:0);
-  let avoidance=20+(refusal==='space'?10:0)+(first==='continue'?6:0)+(boundary==='delay'?5:0)+(conflict==='close'?9:0)+(loveBoundary==='distance'?10:0)+(loveBoundary==='avoidTalk'?6:0)+(future==='avoid'?8:0)+(support==='hold'?5:0)+(vulnerability==='minimize'?8:0)+(independence==='protect'?5:0)+(apology==='deflect'?9:0)+(apology==='explain'?5:0)+(meetFriends==='later'?8:0);
-  anxiety=Math.min(92,anxiety); avoidance=Math.min(88,avoidance);
+  /* 1번은 복수 선택, 2번은 정렬이라 표로 다루지 않고 따로 더한다 */
+  let anxiety=14+weighAnswers(ANXIETY_WEIGHTS)+(multi.includes('review')?12:0)+(multi.includes('check')?7:0)+(first==='review'?6:0);
+  let avoidance=18+weighAnswers(AVOIDANCE_WEIGHTS)+(first==='continue'?6:0);
+  anxiety=Math.max(0,Math.min(92,anxiety)); avoidance=Math.max(0,Math.min(88,avoidance));
   const dailyExpression=boundary==='clear'?72:boundary==='explain'?64:48;
   const loveExpression=['boundary','share','show'].includes(loveBoundary)||['share','askSmall'].includes(support)||apology==='own'?74:['distance','minimize','hold'].includes(loveBoundary)||['minimize','hold'].includes(vulnerability)||apology==='deflect'?38:56;
   const attachment=anxiety>=60&&avoidance>=55?'불안-회피 경향':anxiety>=60?'불안 애착 경향':avoidance>=55?'회피 애착 경향':'안정 애착 경향';
-  const mbti=`${energy==='out'?'E':'I'}${information==='system'||information==='try'?'N':'S'}${judgment==='solve'?'T':'F'}${planning==='plan'?'J':'P'}`;
+  const axes=resolveAxes({energy,information,judgment,planning,decision,feedback,publicMisunderstanding,loveMisunderstanding,busyContact,future});
+  const mbti=axes.map(axis=>axis.result).join('');
   const head=document.querySelector('.result-head');
   document.querySelector('.chart-card').innerHTML=`<h3>일상과 연애의 차이</h3><div class="legend"><span><i class="dot"></i>일상</span><span><i class="dot"></i>연애</span></div>${chartRow('표현의 직접성',dailyExpression,loveExpression)}${chartRow('관계 단서 민감도',44,anxiety)}${chartRow('거리 두기',35,avoidance)}`;
   head.querySelector('.lead').textContent='성향과 애착 유형을 함께 보고, 평소와 연애 상황에서 달라지는 반응도 비교했어요.';
   head.insertAdjacentHTML('afterend',`<div class="type-grid"><div class="type-card"><small>성향 탐색 결과</small><strong>${mbti}</strong><p>공식 MBTI®가 아닌 상황 기반 선호 지표</p></div><div class="type-card"><small>애착 반응 결과</small><strong style="font-size:20px">${attachment}</strong><p>불안 ${anxiety} · 회피 ${avoidance}</p></div></div>`);
-  const axisEvidence=buildAxisEvidence({energy,information,judgment,planning,decision,feedback,recovery,publicMisunderstanding,busyContact,future});
+  const axisEvidence=buildAxisEvidence({energy,information,judgment,planning,decision,feedback,publicMisunderstanding,loveMisunderstanding,busyContact,future},axes);
   document.querySelector('.type-grid').insertAdjacentHTML('afterend',`<section class="axis-section"><h3>왜 ${mbti}로 추정했을까요?</h3><p class="note">서로 다른 장면에서 반복된 선택과 반대 신호를 함께 읽었어요.</p>${axisEvidence.map(axis=>`<div class="axis-card"><div class="axis-head"><strong>${axis.pair} · ${axis.name}</strong><span class="axis-badge">${axis.result} 쪽 ${axis.confidence}%</span></div><ul class="axis-evidence">${axis.evidence.map(text=>`<li>${text}</li>`).join('')}</ul><p class="axis-conclusion">${axis.conclusion}</p><div class="axis-meter"><span style="width:${axis.confidence}%"></span></div></div>`).join('')}</section>`);
   const portrait=buildPortrait({anxiety,avoidance,energy,judgment,loveBoundary,conflict,repair});
   document.querySelector('.axis-section').insertAdjacentHTML('afterend',`<div class="portrait"><span class="eyebrow">모든 답변을 천천히 이어 보면</span><h3>${portrait.title}</h3><p>${portrait.body}</p><p>${portrait.care}</p></div>`);
   const reply=(state.answers[3]||'').trim();
-  const hasQuestion=/[?？]|왜|무슨|괜찮|일 있어/.test(reply);
-  const hasFeeling=/서운|아쉽|걱정|불안|속상|좋아|괜찮아/.test(reply);
+  /* 키워드만 보면 오탐이 잦다. "왜냐면"은 질문이 아니고, "맨날 가던 카페"는
+     비난이 아니며, "안 괜찮아"는 괜찮다는 뜻이 아니다. 앞뒤를 조금 더 본다 */
+  const hasQuestion=/[?？]|왜(?!냐)|무슨 일|일 있어|괜찮(아\?|은지|냐)/.test(reply);
+  const hasFeeling=/서운|아쉽|걱정|불안|속상|좋아|(?<![안못]\s?)괜찮아(?!\?)/.test(reply);
   const hasPlan=/다음|나중|언제|주말|연락|얘기/.test(reply);
-  const hasBlame=/맨날|항상|됐어|마음대로|또 이래|나 싫/.test(reply);
+  const hasBlame=/맨날\s*(이래|그래|이런|저런|왜)|항상\s*(이래|그래|이런)|됐어|마음대로|또 이래|나 싫/.test(reply);
   const replyStyle=buildReplyNarrative({reply,hasBlame,hasFeeling,hasQuestion,hasPlan});
   const comparison=buildRelationshipDifference(friendChoice,loverChoice);
   const disclaimer=document.querySelector('.disclaimer');
   document.querySelectorAll('.insight').forEach(card=>card.remove());
-  const deep=buildDeepInsights({boundary,refusal,loveBoundary,moneyFriend,moneyLove,feedback,loveFeedback,jealousy,affection,publicMisunderstanding,loveMisunderstanding,future,support,busyContact,vulnerability,repeatConflict,independence,recovery,conflict,repair,anxiety,avoidance});
+  const deep=buildDeepInsights({boundary,refusal,loveBoundary,moneyFriend,moneyLove,feedback,loveFeedback,jealousy,affection,publicMisunderstanding,loveMisunderstanding,future,support,busyContact,vulnerability,repeatConflict,independence,recovery,conflict,repair,goodNews,apology,meetFriends,anxiety,avoidance});
   disclaimer.insertAdjacentHTML('beforebegin',`${deep.map(item=>`<div class="insight"><b>${item.title}</b><p>${item.body}</p></div>`).join('')}<div class="insight"><b>당신이 고른 말에는 이런 마음이 보여요</b><blockquote class="reply-quote">${escapeHTML(reply)}</blockquote><p>${replyStyle}</p></div><div class="insight"><b>가까운 사람 앞에서 달라지는 마음</b><p>${comparison}</p></div>`);
   const pairedDifferences=[friendChoice!==loverChoice,moneyFriend!==moneyLove,feedback!==loveFeedback,publicMisunderstanding!==loveMisunderstanding].filter(Boolean).length;
   const modeScore=Math.min(99,Math.round(pairedDifferences*13+Math.abs(dailyExpression-loveExpression)*.7+Math.abs(44-anxiety)*.35));
@@ -236,40 +335,52 @@ function buildPortrait({anxiety,avoidance,energy,judgment,loveBoundary,conflict,
   return{title,body:`${opening} ${middle} ${boundary}`,care};
 }
 
-function buildAxisEvidence(a){
-  const axes=[];
-  const isE=a.energy==='out';
-  const eCounter=a.decision==='consult'||a.publicMisunderstanding==='private';
-  axes.push({pair:'E / I',name:'에너지를 얻고 생각을 정리하는 방향',result:isE?'E':'I',confidence:eCounter!==isE?62:74,evidence:[
-    `낯선 모임에서는 “${choiceLabel(8,a.energy)}”를 골랐어요. ${isE?'사람들과 상호작용하며 장면 안으로 들어가는 반응입니다.':'먼저 관찰하거나 소수와 연결하며 에너지를 조절하는 반응입니다.'}`,
-    `중요한 결정에서는 “${choiceLabel(26,a.decision)}”를 골랐어요. ${a.decision==='consult'?'말을 주고받으며 생각을 선명하게 하는 E 신호도 함께 보입니다.':'결정의 기준을 내 안에서 정리하려는 I 신호와 잘 이어집니다.'}`,
-    `오해가 생긴 단체 대화에서는 “${choiceLabel(22,a.publicMisunderstanding)}”를 택했습니다. ${a.publicMisunderstanding==='private'?'공개된 장면보다 일대일 연결을 편하게 여기는 모습입니다.':'필요한 순간에는 바깥으로 바로 대응할 수 있다는 반대 신호도 있습니다.'}`
-  ],conclusion:`한 장면만 보면 양쪽 모습이 있지만, 편안한 기본값은 ${isE?'사람과 부딪치며 생각을 만드는 E':'혼자 또는 좁은 관계 안에서 생각을 정리하는 I'}에 조금 더 가까워 보여요.`});
+/**
+ * 축 카드에 붙일 근거 문장. 글자와 신뢰도는 resolveAxes 가 이미 정했고
+ * 여기서는 그 판단을 설명하기만 한다.
+ *
+ * 보조 근거가 주 문항과 반대를 가리켰다면 그 사실을 숨기지 않고 적는다.
+ * 반대 신호가 충분히 모여 글자가 뒤집힌 경우도 문장으로 알린다.
+ */
+function buildAxisEvidence(a,axes){
+  const isE=axes[0].result==='E', isN=axes[1].result==='N';
+  const isT=axes[2].result==='T', isJ=axes[3].result==='J';
 
-  const isN=a.information==='system'||a.information==='try';
-  const nCounter=a.feedback==='extract'||a.decision==='criteria';
-  axes.push({pair:'S / N',name:'정보를 받아들이는 방식',result:isN?'N':'S',confidence:nCounter!==isN?60:72,evidence:[
-    `새 가전제품을 익힐 때 “${choiceLabel(9,a.information)}”를 골랐어요. ${isN?'정해진 순서보다 구조와 가능성을 먼저 파악하는 N 쪽 신호입니다.':'확인 가능한 정보와 실제 용도를 먼저 붙잡는 S 쪽 신호입니다.'}`,
-    `날카로운 피드백 뒤에는 “${choiceLabel(18,a.feedback)}”를 택했습니다. ${a.feedback==='extract'?'말 전체보다 당장 적용할 구체적인 부분을 추리는 S 신호가 있습니다.':a.feedback==='ruminate'?'사실뿐 아니라 표정과 말투의 의미까지 넓혀 읽는 N 신호가 보입니다.':'추가 맥락을 모아 전체 의미를 이해하려는 모습입니다.'}`,
-    `정보가 부족한 결정에서는 “${choiceLabel(26,a.decision)}”를 골랐어요. ${a.decision==='intuition'?'자료가 완성되지 않아도 전체적인 감각을 신뢰하는 N 신호입니다.':'현실적인 기준과 현재 가진 정보를 활용하는 S 신호도 함께 있습니다.'}`
-  ],conclusion:`당신은 ${isN?'보이는 사실 뒤의 구조와 의미를 먼저 연결하는 N':'구체적인 사실과 지금 적용할 수 있는 방법을 중시하는 S'} 쪽으로 추정됩니다. 다만 상황에 따라 반대 방식도 꽤 유연하게 사용해요.`});
+  const text={
+    'E / I':{evidence:[
+      `낯선 모임에서는 “${choiceLabel(8,a.energy)}”를 골랐어요. ${['out','one'].includes(a.energy)?'사람들과 상호작용하며 장면 안으로 들어가는 반응입니다.':'먼저 관찰하거나 혼자 에너지를 회복하는 반응입니다.'}`,
+      `중요한 결정에서는 “${choiceLabel(26,a.decision)}”를 골랐어요. ${a.decision==='consult'?'말을 주고받으며 생각을 선명하게 하는 E 신호입니다.':'결정의 기준을 내 안에서 정리하려는 I 신호와 이어집니다.'}`,
+      `오해가 생긴 단체 대화에서는 “${choiceLabel(22,a.publicMisunderstanding)}”를 택했습니다. ${['clarify','humor'].includes(a.publicMisunderstanding)?'공개된 자리에서 바로 대응하는 E 신호입니다.':'공개된 장면보다 일대일 연결을 편하게 여기는 I 신호입니다.'}`
+    ],conclusion:`편안한 기본값은 ${isE?'사람과 부딪치며 생각을 만드는 E':'혼자 또는 좁은 관계 안에서 생각을 정리하는 I'}에 조금 더 가까워 보여요.`},
 
-  const isT=a.judgment==='solve';
-  const fSignal=a.loveMisunderstanding==='apologize'||a.publicMisunderstanding==='private';
-  axes.push({pair:'T / F',name:'판단의 중심에 두는 것',result:isT?'T':'F',confidence:fSignal!==!isT?61:73,evidence:[
-    `친구의 반복되는 고민에는 “${choiceLabel(10,a.judgment)}”를 골랐어요. ${isT?'감정 속에서도 원인과 해결 가능한 지점을 찾는 T 신호입니다.':'해결보다 사람의 마음과 필요한 반응을 먼저 살피는 F 신호입니다.'}`,
-    `연인이 메시지를 차갑게 느꼈을 때는 “${choiceLabel(23,a.loveMisunderstanding)}”를 택했습니다. ${a.loveMisunderstanding==='apologize'?'의도보다 상대가 실제로 느낀 영향을 중요하게 보는 F 신호가 뚜렷합니다.':a.loveMisunderstanding==='clarify'?'감정과 사실을 함께 확인하려는 균형 신호입니다.':'내 입장과 책임의 경계를 분명히 하려는 T 신호가 있습니다.'}`,
-    `공개된 오해에는 “${choiceLabel(22,a.publicMisunderstanding)}”로 반응했습니다. 관계의 분위기와 문제 해결 중 무엇을 먼저 돌보는지 보여주는 보조 근거예요.`
-  ],conclusion:`그래서 ${isT?'관계를 소중히 여기면서도 결론을 낼 때는 논리와 해결 가능성을 먼저 보는 T':'결정을 내릴 때 사람에게 미칠 영향과 관계의 맥락을 먼저 보는 F'}에 조금 더 가깝다고 보았습니다.`});
+    'S / N':{evidence:[
+      `새 가전제품을 익힐 때 “${choiceLabel(9,a.information)}”를 골랐어요. ${['system','try'].includes(a.information)?'정해진 순서보다 구조와 가능성을 먼저 파악하는 N 신호입니다.':'확인 가능한 정보와 실제 용도를 먼저 붙잡는 S 신호입니다.'}`,
+      `날카로운 피드백 뒤에는 “${choiceLabel(18,a.feedback)}”를 택했습니다. ${a.feedback==='ruminate'?'사실뿐 아니라 표정과 말투의 의미까지 넓혀 읽는 N 신호입니다.':a.feedback==='detach'?'판단을 길게 끌지 않고 넘기는 모습입니다.':'말 전체보다 당장 적용할 구체적인 부분을 추리는 S 신호입니다.'}`,
+      `정보가 부족한 결정에서는 “${choiceLabel(26,a.decision)}”를 골랐어요. ${a.decision==='intuition'?'자료가 완성되지 않아도 전체적인 감각을 신뢰하는 N 신호입니다.':a.decision==='consult'?'혼자 판단하기보다 함께 정리하려는 모습입니다.':'현실적인 기준과 지금 가진 정보를 활용하는 S 신호입니다.'}`
+    ],conclusion:`${isN?'보이는 사실 뒤의 구조와 의미를 먼저 연결하는 N':'구체적인 사실과 지금 적용할 수 있는 방법을 중시하는 S'} 쪽으로 추정됩니다. 다만 상황에 따라 반대 방식도 꽤 유연하게 사용해요.`},
 
-  const isJ=a.planning==='plan';
-  const jSignal=a.busyContact==='notice'||a.future==='practical'||a.decision==='criteria';
-  axes.push({pair:'J / P',name:'생활을 조직하고 대응하는 방식',result:isJ?'J':'P',confidence:jSignal===isJ?76:63,evidence:[
-    `갑자기 빈 주말에는 “${choiceLabel(11,a.planning)}”를 골랐어요. ${isJ?'시간의 윤곽을 먼저 잡아두는 J 신호입니다.':'일부만 정하거나 흐름에 맡겨 선택지를 열어두는 P 신호입니다.'}`,
-    `바쁜 하루의 연락은 “${choiceLabel(27,a.busyContact)}”를 택했습니다. ${a.busyContact==='notice'||a.busyContact==='routine'?'미리 예측 가능성을 만들어두려는 J 신호입니다.':'상황이 실제로 펼쳐지는 대로 대응하는 P 신호입니다.'}`,
-    `미래 이야기가 부담스러울 때는 “${choiceLabel(24,a.future)}”를 골랐어요. ${a.future==='practical'?'막연한 가능성을 구체적인 조건으로 바꾸려는 J 신호입니다.':a.future==='avoid'||a.future==='join'?'결론을 서두르지 않고 현재의 흐름을 유지하는 P 신호도 보입니다.':'계획보다 현재 아는 것과 모르는 것을 구분하는 태도가 보입니다.'}`
-  ],conclusion:`전체적으로는 ${isJ?'예측 가능한 틀을 만들어 마음의 여유를 확보하는 J':'가능성을 열어두고 상황에 맞게 움직이는 P'}가 기본값에 더 가까워 보여요. 이것은 부지런함이나 게으름이 아니라, 편안함을 만드는 방식의 차이입니다.`});
-  return axes;
+    'T / F':{evidence:[
+      `친구의 반복되는 고민에는 “${choiceLabel(10,a.judgment)}”를 골랐어요. ${['solve','askNeed'].includes(a.judgment)?'감정 속에서도 원인과 필요한 것을 정리하려는 T 신호입니다.':'해결보다 사람의 마음과 필요한 반응을 먼저 살피는 F 신호입니다.'}`,
+      `연인이 메시지를 차갑게 느꼈을 때는 “${choiceLabel(23,a.loveMisunderstanding)}”를 택했습니다. ${a.loveMisunderstanding==='apologize'?'의도보다 상대가 실제로 느낀 영향을 중요하게 보는 F 신호가 뚜렷합니다.':a.loveMisunderstanding==='defend'?'내 입장과 책임의 경계를 분명히 하려는 T 신호입니다.':'감정과 사실을 함께 확인하려는 균형 신호입니다.'}`,
+      `공개된 오해에는 “${choiceLabel(22,a.publicMisunderstanding)}”로 반응했습니다. ${a.publicMisunderstanding==='clarify'?'분위기보다 사실을 바로잡는 쪽을 먼저 본 T 신호입니다.':['private','humor'].includes(a.publicMisunderstanding)?'문제 자체보다 관계의 분위기를 먼저 돌본 F 신호입니다.':'상황이 정리되기를 기다리는 중립적인 반응입니다.'}`
+    ],conclusion:`${isT?'관계를 소중히 여기면서도 결론을 낼 때는 논리와 해결 가능성을 먼저 보는 T':'결정을 내릴 때 사람에게 미칠 영향과 관계의 맥락을 먼저 보는 F'}에 조금 더 가깝다고 보았습니다.`},
+
+    'J / P':{evidence:[
+      `갑자기 빈 주말에는 “${choiceLabel(11,a.planning)}”를 골랐어요. ${['plan','anchor'].includes(a.planning)?'시간의 윤곽을 먼저 잡아두는 J 신호입니다.':'흐름에 맡겨 선택지를 열어두는 P 신호입니다.'}`,
+      `바쁜 하루의 연락은 “${choiceLabel(27,a.busyContact)}”를 택했습니다. ${['notice','routine'].includes(a.busyContact)?'미리 예측 가능성을 만들어두려는 J 신호입니다.':'상황이 실제로 펼쳐지는 대로 대응하는 P 신호입니다.'}`,
+      `미래 이야기가 부담스러울 때는 “${choiceLabel(24,a.future)}”를 골랐어요. ${a.future==='practical'?'막연한 가능성을 구체적인 조건으로 바꾸려는 J 신호입니다.':a.future==='honest'?'계획보다 아는 것과 모르는 것을 구분하는 태도가 보입니다.':'결론을 서두르지 않고 현재의 흐름을 유지하는 P 신호입니다.'}`
+    ],conclusion:`전체적으로는 ${isJ?'예측 가능한 틀을 만들어 마음의 여유를 확보하는 J':'가능성을 열어두고 상황에 맞게 움직이는 P'}가 기본값에 더 가까워 보여요. 이것은 부지런함이나 게으름이 아니라, 편안함을 만드는 방식의 차이입니다.`}
+  };
+
+  return axes.map(axis=>{
+    const copy=text[axis.pair];
+    const flipped=(axis.primary>0)!==(axis.result===axis.poles[0]);
+    const note=flipped
+      ? '첫 번째 장면만 보면 반대쪽에 가까웠지만, 나머지 두 장면이 모두 이쪽을 가리켜 이렇게 보았어요.'
+      : axis.agrees ? '세 장면이 같은 방향을 가리켜 비교적 또렷하게 읽혔어요.'
+      : '장면마다 신호가 갈려서 단정하기는 어려운 축이에요.';
+    return {...axis,evidence:copy.evidence,conclusion:`${copy.conclusion} ${note}`};
+  });
 }
 
 function buildReplyNarrative({reply,hasBlame,hasFeeling,hasQuestion,hasPlan}){
@@ -324,7 +435,29 @@ function buildDeepInsights(a){
   if(a.recovery==='reflect'||a.feedback==='extract'){
     cards.push({title:'강점 · 경험을 그냥 지나치지 않고 내 것으로 만들어요',body:'피드백이나 갈등이 지나간 뒤 무엇이 있었는지 정리하고 다음에 바꿀 지점을 찾는 힘이 있습니다. 아픈 경험에서도 배울 것을 꺼내는 사람은 관계 속에서 조금씩 더 자유로워질 수 있어요. 다만 성찰이 자기 심문으로 변하지 않도록 조심하세요. 모든 갈등에서 내가 더 잘했어야 할 답을 찾을 필요는 없습니다. 기록할 때는 “내가 바꿀 한 가지”와 함께 “내가 책임지지 않아도 될 한 가지”도 나란히 적어보세요.'});
   }
-  return cards.slice(0,6);
+
+  /* 카톡 문항 세 개. 점수에는 들어가는데 설명에는 한 번도 나오지 않아
+     "이건 왜 물어봤지" 싶은 문항으로 남아 있었다 */
+  if(a.apology==='own'){
+    cards.push({title:'강점 · 지적을 받아도 관계를 지키면서 인정할 수 있어요',body:'상대가 서운함을 꺼냈을 때 당신은 변명을 앞세우거나 과하게 자책하지 않고, 무슨 일이 있었는지 인정한 뒤 다음에 할 일을 함께 얹었습니다. 사과에서 가장 어려운 부분이 바로 이 균형이에요. 내 잘못을 인정하는 순간 나라는 사람 전체가 부정당하는 느낌이 들면 사람은 방어하거나 무너지거든요. 당신은 행동과 자신을 분리해서 볼 수 있는 편입니다. 이 방식은 상대에게도 “말해도 괜찮은 사람”이라는 신호가 되어, 작은 서운함이 쌓이기 전에 나오게 만듭니다.'});
+  }else if(a.apology==='sorry'){
+    cards.push({title:'살펴볼 점 · 사과가 자기비난으로 넘어갈 때가 있어요',body:'상대가 서운함을 말했을 때 당신은 빠르게 미안하다고 말하고, 곧 자신에 대한 판단까지 덧붙이는 편입니다. 관계를 소중히 여기기에 나오는 반응이지만, 사과가 자기비난이 되면 대화의 초점이 옮겨갑니다. 서운했던 사람이 오히려 당신을 달래야 하는 자리에 놓이거든요. 그러면 상대는 다음부터 서운함을 말하기가 어려워집니다. “미안해. 다음엔 이렇게 할게” 정도에서 한 번 멈춰보세요. 내가 어떤 사람인지에 대한 평가는 그 문장에 넣지 않아도 됩니다.'});
+  }else if(a.apology==='deflect'){
+    cards.push({title:'살펴볼 점 · 지적을 받으면 먼저 사실 관계를 다투게 돼요',body:'상대가 서운함을 말했을 때 당신은 그것이 정확한 이야기인지 먼저 따지거나, 상대에게도 비슷한 면이 있다는 점을 짚었습니다. 억울함이 있다면 그것도 사실이겠지만, 이 순간 상대가 말한 것은 사건의 정확성이 아니라 자기가 느낀 감정입니다. 두 사람이 서로 다른 주제로 대화하게 되면 문제는 그대로 남고 피로만 쌓여요. 사실 정정이 필요하더라도 순서를 바꿔보세요. 먼저 “그렇게 느꼈구나”를 지나간 다음에 내 사정을 말하면, 같은 내용도 훨씬 잘 도착합니다.'});
+  }
+  if(a.goodNews==='worry'){
+    cards.push({title:'살펴볼 점 · 좋은 소식 앞에서도 다음 걱정이 먼저 올라와요',body:'연인의 기쁜 소식에 축하를 건네면서도 당신의 마음은 곧 그다음에 달라질 것들로 향했습니다. 앞을 내다보는 힘이고 실제로 도움이 될 때도 많지만, 기쁨을 나누는 자리에서는 상대가 김이 새는 느낌을 받을 수 있어요. 좋은 일은 함께 크게 만들어줄 때 관계의 연료가 됩니다. 현실적인 이야기는 조금 뒤로 미뤄도 늦지 않아요. 먼저 그 사람이 어떻게 해냈는지를 충분히 물어봐 주세요. 걱정은 그 대화가 끝난 뒤에 꺼내도 충분히 전달됩니다.'});
+  }else if(a.goodNews==='savor'){
+    cards.push({title:'강점 · 좋은 일을 함께 키울 줄 알아요',body:'연인이 기쁜 소식을 전했을 때 당신은 축하 한마디로 넘기지 않고 과정을 더 듣고 싶어 했습니다. 관계 연구에서 반복해서 확인되는 것 중 하나가, 힘든 일을 어떻게 위로하는지 못지않게 좋은 일에 어떻게 반응하는지가 관계의 만족도를 좌우한다는 점이에요. 기쁨은 혼자 두면 금방 식지만 누군가 함께 되짚어주면 오래 남습니다. 당신은 그 자리를 만들어줄 수 있는 사람입니다.'});
+  }
+  if(a.meetFriends==='later'){
+    cards.push({title:'살펴볼 점 · 관계의 반경이 두 사람 안에서 멈출 수 있어요',body:'연인이 자기 쪽 사람들에게 당신을 소개하려 했을 때 당신은 자리를 미루는 쪽을 택했습니다. 낯선 자리가 부담스러운 것은 자연스러운 일이고, 혼자 쉬는 시간을 지키는 것도 필요한 선택이에요. 다만 이런 자리가 계속 미뤄지면 상대는 관계가 자기 삶 안으로 들어오지 않는다고 느낄 수 있습니다. 꼭 매번 나가야 하는 것은 아니지만, 어려운 이유를 말해두면 거절이 거리로 읽히지 않아요. 짧게 얼굴만 비치고 나오는 방식도 하나의 답입니다.'});
+  }else if(a.meetFriends==='read'){
+    cards.push({title:'살펴볼 점 · 초대보다 그 말의 의미를 먼저 확인하게 돼요',body:'함께 가자는 제안을 받았을 때 당신은 “다들 궁금해한다”는 말이 무슨 뜻인지부터 확인했습니다. 상대가 나를 어떻게 이야기해왔는지, 그 자리에서 내 위치가 어디인지를 미리 알고 싶은 마음이에요. 준비하려는 태도이기도 하지만, 초대가 확인의 자리로 바뀌면 상대는 환영이 시험받는 느낌을 받을 수 있습니다. 궁금한 것은 물어봐도 괜찮아요. 다만 순서를 바꿔 먼저 반가움을 전한 뒤에 물으면, 같은 질문도 다르게 도착합니다.'});
+  }
+  /* 실제로 만들어지는 카드는 많아야 9개다. 상한이 그보다 낮으면 뒤에 붙는
+     카드가 조용히 잘려서 특정 문항이 결과에 영영 안 나오는 일이 생긴다 */
+  return cards.slice(0,10);
 }
 
 function buildPreferenceInsights(loveOrder,idealBoard,friendBoard){
