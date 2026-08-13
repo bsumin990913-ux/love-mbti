@@ -124,11 +124,12 @@ function enrichResult(){
   const jealousy=state.answers[20],affection=state.answers[21],publicMisunderstanding=state.answers[22],loveMisunderstanding=state.answers[23];
   const future=state.answers[24],support=state.answers[25],decision=state.answers[26],busyContact=state.answers[27];
   const vulnerability=state.answers[28],repeatConflict=state.answers[29],independence=state.answers[30],recovery=state.answers[31];
-  let anxiety=24+(multi.includes('review')?12:0)+(multi.includes('check')?7:0)+(first==='review'?6:0)+(loverChoice==='reason'?6:0)+(loverChoice==='withdraw'?7:0)+(intimacy==='worry'?10:0)+(conflict==='follow'?9:0)+(repair==='remain'?6:0)+(loveFeedback==='ask'||loveFeedback==='ruminate'?8:0)+(jealousy==='monitor'?9:0)+(affection==='mirror'?8:0);
-  let avoidance=20+(refusal==='space'?10:0)+(first==='continue'?6:0)+(boundary==='delay'?5:0)+(conflict==='close'?9:0)+(loveBoundary==='distance'?10:0)+(loveBoundary==='avoidTalk'?6:0)+(future==='avoid'?8:0)+(support==='hold'?5:0)+(vulnerability==='minimize'?8:0)+(independence==='protect'?5:0);
+  const goodNews=state.answers[32],apology=state.answers[33],meetFriends=state.answers[34];
+  let anxiety=24+(multi.includes('review')?12:0)+(multi.includes('check')?7:0)+(first==='review'?6:0)+(loverChoice==='reason'?6:0)+(loverChoice==='withdraw'?7:0)+(intimacy==='worry'?10:0)+(conflict==='follow'?9:0)+(repair==='remain'?6:0)+(loveFeedback==='ask'||loveFeedback==='ruminate'?8:0)+(jealousy==='monitor'?9:0)+(affection==='mirror'?8:0)+(goodNews==='worry'?7:0)+(apology==='sorry'?9:0)+(meetFriends==='read'?8:0);
+  let avoidance=20+(refusal==='space'?10:0)+(first==='continue'?6:0)+(boundary==='delay'?5:0)+(conflict==='close'?9:0)+(loveBoundary==='distance'?10:0)+(loveBoundary==='avoidTalk'?6:0)+(future==='avoid'?8:0)+(support==='hold'?5:0)+(vulnerability==='minimize'?8:0)+(independence==='protect'?5:0)+(apology==='deflect'?9:0)+(apology==='explain'?5:0)+(meetFriends==='later'?8:0);
   anxiety=Math.min(92,anxiety); avoidance=Math.min(88,avoidance);
   const dailyExpression=boundary==='clear'?72:boundary==='explain'?64:48;
-  const loveExpression=['boundary','share','show'].includes(loveBoundary)||['share','askSmall'].includes(support)?74:['distance','minimize','hold'].includes(loveBoundary)||['minimize','hold'].includes(vulnerability)?38:56;
+  const loveExpression=['boundary','share','show'].includes(loveBoundary)||['share','askSmall'].includes(support)||apology==='own'?74:['distance','minimize','hold'].includes(loveBoundary)||['minimize','hold'].includes(vulnerability)||apology==='deflect'?38:56;
   const attachment=anxiety>=60&&avoidance>=55?'불안-회피 경향':anxiety>=60?'불안 애착 경향':avoidance>=55?'회피 애착 경향':'안정 애착 경향';
   const mbti=`${energy==='out'?'E':'I'}${information==='system'||information==='try'?'N':'S'}${judgment==='solve'?'T':'F'}${planning==='plan'?'J':'P'}`;
   const head=document.querySelector('.result-head');
