@@ -40,7 +40,7 @@ function layout(content, bottom=''){
 function home(){
   state.step=-1;
   app.innerHTML=layout(`<section class="screen hero"><span class="eyebrow">관계 반응 탐색 · 약 5분</span><h1>평소의 나와<br>연애할 때의 나는<br>얼마나 다를까요?</h1><p class="lead">정답이 보이는 성격 문항 대신, 실제 상황에서 내가 하는 선택과 반응 순서를 살펴봐요.</p><div class="feature-grid"><div class="feature"><b>일상과 연애를 따로</b><span>기본 성향과 관계가 가까워졌을 때의 변화를 비교해요.</span></div><div class="feature"><b>카톡처럼 직접 답장</b><span>고른 답보다 실제 말투와 표현 방식을 함께 살펴봐요.</span></div><div class="feature"><b>유형보다 행동 패턴</b><span>애착 불안·회피, 경계 설정, 공감과 회복 방식을 입체적으로 보여줘요.</span></div></div><p class="note">이 테스트는 자기이해를 위한 체험형 도구이며 임상 진단이나 공식 MBTI® 검사가 아닙니다.</p></section>`,`<div class="bottom"><button class="primary" onclick="start()">내 관계 반응 알아보기</button></div>`);
-  document.querySelector('.feature-grid').insertAdjacentHTML('beforebegin',`<div class="name-field"><label for="participant">결과에 표시할 이름 또는 닉네임</label><input id="participant" maxlength="20" placeholder="예: 달순" value="${escapeHTML(state.participant)}"></div>`);
+  document.querySelector('.feature-grid').insertAdjacentHTML('beforebegin',`<div class="name-field"><label for="participant">결과에 표시할 이름 또는 닉네임</label><input id="participant" maxlength="20" placeholder="이름 또는 닉네임 입력" value="${escapeHTML(state.participant)}"></div>`);
 }
 
 function start(){const input=document.querySelector('#participant');if(input&&!input.value.trim()){input.focus();return}if(input)state.participant=input.value.trim();sessionId=randomId();state.step=0;state.answers={};state.selected=[];state.rank=[];state.boards={};state.boardPages={};selectedBoardItem=null;render();}
